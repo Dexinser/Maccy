@@ -22,15 +22,15 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
   var searchQuery: String = "" {
     didSet {
       throttler.throttle { [self] in
-        updateItems(search.search(string: searchQuery, within: all))
-
-        if searchQuery.isEmpty {
-          AppState.shared.navigator.select(item: unpinnedItems.first)
-        } else {
-          AppState.shared.navigator.highlightFirst()
-        }
-
-        AppState.shared.popup.needsResize = true
+        recomputeVisibleItems()
+      }
+    }
+  }
+  var activeFilter: ClipboardFilter = Defaults[.activeFilter] {
+    didSet {
+      Defaults[.activeFilter] = activeFilter
+      throttler.throttle { [self] in
+        recomputeVisibleItems()
       }
     }
   }
@@ -106,7 +106,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     let descriptor = FetchDescriptor<HistoryItem>()
     let results = try Storage.shared.context.fetch(descriptor)
     all = sorter.sort(results).map { HistoryItemDecorator($0) }
-    items = all
+    recomputeVisibleItems(updateSelection: false, needsResize: false)
 
     limitHistorySize(to: Defaults[.size])
 
@@ -187,11 +187,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       if let index = sortedItems.firstIndex(of: item) {
         all.insert(itemDecorator, at: index)
       }
-
-      items = all
-      updateUnpinnedShortcuts()
-      AppState.shared.popup.needsResize = true
     }
+
+    recomputeVisibleItems(updateSelection: false)
 
     return itemDecorator
   }
@@ -219,7 +217,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       }
       all.removeAll(where: \.isUnpinned)
       sessionLog.removeValues { $0.pin == nil }
-      items = all
+      recomputeVisibleItems(updateSelection: false, needsResize: false)
 
       try? Storage.shared.context.transaction {
         try? Storage.shared.context.delete(
@@ -250,7 +248,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       }
       all.removeAll()
       sessionLog.removeAll()
-      items = all
+      recomputeVisibleItems(updateSelection: false, needsResize: false)
 
       try? Storage.shared.context.delete(model: HistoryItem.self)
       Storage.shared.context.processPendingChanges()
@@ -276,10 +274,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     }
 
     all.removeAll { $0 == item }
-    items.removeAll { $0 == item }
     sessionLog.removeValues { $0 == item.item }
 
-    updateUnpinnedShortcuts()
+    recomputeVisibleItems(updateSelection: false)
     Task {
       AppState.shared.popup.needsResize = true
     }
@@ -434,10 +431,8 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       all.insert(item, at: newIndex)
     }
 
-    items = all
-
     searchQuery = ""
-    updateUnpinnedShortcuts()
+    recomputeVisibleItems(updateSelection: false, needsResize: false)
     if item.isUnpinned {
       AppState.shared.navigator.scrollTarget = item.id
     }
@@ -475,6 +470,27 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     }
 
     updateUnpinnedShortcuts()
+  }
+
+  private func recomputeVisibleItems(
+    updateSelection: Bool = true,
+    needsResize: Bool = true
+  ) {
+    let searchResults = search.search(string: searchQuery, within: all)
+    let filteredResults = searchResults.filter { activeFilter.matches($0.object.kind) }
+    updateItems(filteredResults)
+
+    if updateSelection {
+      if searchQuery.isEmpty {
+        AppState.shared.navigator.select(item: unpinnedItems.first)
+      } else {
+        AppState.shared.navigator.highlightFirst()
+      }
+    }
+
+    if needsResize {
+      AppState.shared.popup.needsResize = true
+    }
   }
 
   private func updateShortcuts() {

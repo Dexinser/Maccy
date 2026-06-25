@@ -193,6 +193,24 @@ class HistoryItem {
 
   var fromMaccy: Bool { contentData([.fromMaccy]) != nil }
   var universalClipboard: Bool { contentData([.universalClipboard]) != nil }
+  var kind: ClipboardItemKind {
+    let hasFiles = !fileURLs.isEmpty
+    let hasImage = image != nil
+    let hasText = !hasFiles && contentData([.html, .rtf, .string]) != nil
+
+    let kinds = [hasText, hasImage, hasFiles].filter { $0 }.count
+    guard kinds > 1 else {
+      if hasImage {
+        return .image
+      }
+      if hasFiles {
+        return .file
+      }
+      return .text
+    }
+
+    return .mixed
+  }
 
   private var universalClipboardImage: Bool { universalClipboard && fileURLs.first?.pathExtension == "jpeg" }
   private var universalClipboardText: Bool {
