@@ -57,18 +57,6 @@ enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertibl
     }
   }
 
-  func matches(_ kind: ClipboardItemKind) -> Bool {
-    switch self {
-    case .all:
-      return true
-    case .text:
-      return kind == .text
-    case .images:
-      return kind == .image
-    case .files:
-      return kind == .file
-    }
-  }
 }
 
 protocol ClipboardItemMatching {

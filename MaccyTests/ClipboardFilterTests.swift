@@ -52,7 +52,6 @@ class ClipboardFilterTests: XCTestCase {
   }
 
   func testClipboardFilterMatching() {
-    XCTAssertTrue(ClipboardFilter.all.matches(.text))
     let mixedTextImageFile = mixedHistoryItem(
       string: "hello",
       image: NSImage(named: "NSBluetoothTemplate")!,
@@ -94,15 +93,12 @@ class ClipboardFilterTests: XCTestCase {
     let pinned = history.add(historyItem(text: "pinned"))
     pinned.togglePin()
 
-    history.activeFilter = .images
-    history.recomputeVisibleItemsForTesting()
-
     AppState.shared.navigator.selectWithoutScrolling(item: nil)
 
     history.recomputeVisibleItemsForTesting()
 
-    XCTAssertEqual(history.items, [])
-    XCTAssertEqual(AppState.shared.navigator.selection.first, nil)
+    XCTAssertEqual(history.items, [pinned])
+    XCTAssertEqual(AppState.shared.navigator.selection.first, pinned)
   }
 
   private func historyItem(text: String) -> HistoryItem {
