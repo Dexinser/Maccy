@@ -44,6 +44,19 @@ enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertibl
     }
   }
 
+  func matches(_ item: some ClipboardItemMatching) -> Bool {
+    switch self {
+    case .all:
+      return true
+    case .text:
+      return item.containsText
+    case .images:
+      return item.containsImage
+    case .files:
+      return item.containsFiles
+    }
+  }
+
   func matches(_ kind: ClipboardItemKind) -> Bool {
     switch self {
     case .all:
@@ -56,4 +69,10 @@ enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertibl
       return kind == .file
     }
   }
+}
+
+protocol ClipboardItemMatching {
+  var containsText: Bool { get }
+  var containsImage: Bool { get }
+  var containsFiles: Bool { get }
 }

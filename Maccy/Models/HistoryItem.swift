@@ -193,9 +193,21 @@ class HistoryItem {
 
   var fromMaccy: Bool { contentData([.fromMaccy]) != nil }
   var universalClipboard: Bool { contentData([.universalClipboard]) != nil }
+  var containsText: Bool {
+    contentData([.html, .rtf, .string]) != nil
+  }
+
+  var containsImage: Bool {
+    image != nil
+  }
+
+  var containsFiles: Bool {
+    !fileURLs.isEmpty
+  }
+
   var kind: ClipboardItemKind {
-    let hasFiles = !fileURLs.isEmpty
-    let hasImage = image != nil
+    let hasFiles = containsFiles
+    let hasImage = containsImage
     let hasText = !hasFiles && contentData([.html, .rtf, .string]) != nil
 
     let kinds = [hasText, hasImage, hasFiles].filter { $0 }.count
@@ -259,3 +271,5 @@ class HistoryItem {
     self.title = recognizedStrings.joined(separator: "\n")
   }
 }
+
+extension HistoryItem: ClipboardItemMatching {}

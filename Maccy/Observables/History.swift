@@ -477,12 +477,12 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     needsResize: Bool = true
   ) {
     let searchResults = search.search(string: searchQuery, within: all)
-    let filteredResults = searchResults.filter { activeFilter.matches($0.object.kind) }
+    let filteredResults = searchResults.filter { activeFilter.matches($0.object) }
     updateItems(filteredResults)
 
     if updateSelection {
       if searchQuery.isEmpty {
-        AppState.shared.navigator.select(item: unpinnedItems.first)
+        AppState.shared.navigator.select(item: firstVisibleItem)
       } else {
         AppState.shared.navigator.highlightFirst()
       }
@@ -501,6 +501,12 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     }
 
     updateUnpinnedShortcuts()
+  }
+
+  @MainActor
+  func recomputeVisibleItemsForTesting() {
+    throttler.cancel()
+    recomputeVisibleItems()
   }
 
   @MainActor

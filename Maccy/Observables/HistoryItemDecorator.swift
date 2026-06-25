@@ -40,6 +40,9 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
   }
 
   var hasImage: Bool { item.image != nil }
+  var containsText: Bool { item.containsText }
+  var containsImage: Bool { item.containsImage }
+  var containsFiles: Bool { item.containsFiles }
   var kind: ClipboardItemKind { item.kind }
 
   var previewImageGenerationTask: Task<(), Error>?
@@ -208,3 +211,5 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
     }
   }
 }
+
+extension HistoryItemDecorator: ClipboardItemMatching {}
