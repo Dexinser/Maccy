@@ -31,6 +31,8 @@
 		2F8B9DE62C5D6E5D0046EF69 /* NSPoint+DefaultsSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8B9DE52C5D6E5D0046EF69 /* NSPoint+DefaultsSerializable.swift */; };
 		2F9B42EF2F1A494C006548E5 /* ListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9B42EE2F1A4948006548E5 /* ListHeaderView.swift */; };
 		2F9B42F12F1A499D006548E5 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9B42F02F1A4999006548E5 /* ToolbarView.swift */; };
+		F12A00022F00001000000001 /* PreviewTextSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00022F00001000000002 /* PreviewTextSelection.swift */; };
+		F12A00022F00001000000003 /* SelectableTextPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00022F00001000000004 /* SelectableTextPreviewView.swift */; };
 		2FA81FE02E43D9B700C12F92 /* Dictionary+RemoveItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA81FDF2E43D9A600C12F92 /* Dictionary+RemoveItem.swift */; };
 		2FB5BCA02CD8F73F008B33F4 /* ApplicationImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB5BC9F2CD8F73C008B33F4 /* ApplicationImage.swift */; };
 		2FF2E94E2E774B5B0093D72C /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF2E94D2E774B570093D72C /* NavigationManager.swift */; };
@@ -77,6 +79,7 @@
 		DA360DB31E3DF137005C6F6B /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA360DB21E3DF137005C6F6B /* HistoryTests.swift */; };
 		DA384E86232746D800603999 /* SearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA384E85232746D800603999 /* SearchTests.swift */; };
 		F11A11111111111111111111 /* ClipboardFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11A11111111111111111112 /* ClipboardFilterTests.swift */; };
+		F12A00012F00001000000005 /* PreviewTextSelectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */; };
 		DA3BCB8E2C3E015000B01BC1 /* ModifierFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BCB8D2C3E015000B01BC1 /* ModifierFlags.swift */; };
 		DA3BCB922C3EEC3C00B01BC1 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BCB912C3EEC3C00B01BC1 /* History.swift */; };
 		DA3BCB942C3EECBB00B01BC1 /* HistoryItemDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BCB932C3EECBB00B01BC1 /* HistoryItemDecorator.swift */; };
@@ -205,6 +208,8 @@
 		2F8B9DE52C5D6E5D0046EF69 /* NSPoint+DefaultsSerializable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPoint+DefaultsSerializable.swift"; sourceTree = "<group>"; };
 		2F9B42EE2F1A4948006548E5 /* ListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListHeaderView.swift; sourceTree = "<group>"; };
 		2F9B42F02F1A4999006548E5 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		F12A00022F00001000000002 /* PreviewTextSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewTextSelection.swift; sourceTree = "<group>"; };
+		F12A00022F00001000000004 /* SelectableTextPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableTextPreviewView.swift; sourceTree = "<group>"; };
 		2FA81FDF2E43D9A600C12F92 /* Dictionary+RemoveItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+RemoveItem.swift"; sourceTree = "<group>"; };
 		2FB5BC9F2CD8F73C008B33F4 /* ApplicationImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationImage.swift; sourceTree = "<group>"; };
 		2FF2E94D2E774B570093D72C /* NavigationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
@@ -290,6 +295,7 @@
 		DA360DB41E3DF137005C6F6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA384E85232746D800603999 /* SearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTests.swift; sourceTree = "<group>"; };
 		F11A11111111111111111112 /* ClipboardFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardFilterTests.swift; sourceTree = "<group>"; };
+		F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewTextSelectionTests.swift; sourceTree = "<group>"; };
 		DA3873FA2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/AdvancedSettings.strings; sourceTree = "<group>"; };
 		DA3873FB2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/AppearanceSettings.strings; sourceTree = "<group>"; };
 		DA3873FC2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/GeneralSettings.strings; sourceTree = "<group>"; };
@@ -701,6 +707,7 @@
 				DA5E627E2C39E53F00F4C710 /* PreviewItemView.strings */,
 				DA1969132C3F11D600258481 /* PreviewItemView.swift */,
 				DA1969172C3F327500258481 /* SearchFieldView.swift */,
+				F12A00022F00001000000004 /* SelectableTextPreviewView.swift */,
 				2F578C402EFFE8920088B759 /* SlideoutContentView.swift */,
 				2F578C412EFFE8920088B759 /* SlideoutView.swift */,
 				2F9B42F02F1A4999006548E5 /* ToolbarView.swift */,
@@ -729,6 +736,7 @@
 				DA360DB21E3DF137005C6F6B /* HistoryTests.swift */,
 				DA1EDE422045B35300479723 /* HistoryDecoratorTests.swift */,
 				DAFE2DE8268A9B1B00990986 /* HistoryItemTests.swift */,
+				F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */,
 				DA384E85232746D800603999 /* SearchTests.swift */,
 				DA696BD12401EEE900DE80CF /* SorterTests.swift */,
 				DA360DB41E3DF137005C6F6B /* Info.plist */,
@@ -832,6 +840,7 @@
 				DA689FC92C1D18890009B887 /* HighlightMatch.swift */,
 				DA1969202C3F6C6800258481 /* HistoryItemAction.swift */,
 				2F578C3C2EFFE8400088B759 /* ItemsProtocol.swift */,
+				F12A00022F00001000000002 /* PreviewTextSelection.swift */,
 				DABDE97E2974706C005B32E9 /* KeyboardLayout.swift */,
 				DAD665652898A1C000975096 /* KeyChord.swift */,
 				DA19690F2C3F0AAC00258481 /* KeyShortcut.swift */,
@@ -1068,6 +1077,7 @@
 			files = (
 				DAFE2DE9268A9B1B00990986 /* HistoryItemTests.swift in Sources */,
 				F11A11111111111111111111 /* ClipboardFilterTests.swift in Sources */,
+				F12A00012F00001000000005 /* PreviewTextSelectionTests.swift in Sources */,
 				DA3CE8001E44A62500B3AA98 /* ClipboardTests.swift in Sources */,
 				DA1EDE432045B35300479723 /* HistoryDecoratorTests.swift in Sources */,
 				DAE2850223225BD90080E394 /* ColorImageTests.swift in Sources */,
@@ -1112,12 +1122,14 @@
 				2FF2E94E2E774B5B0093D72C /* NavigationManager.swift in Sources */,
 				DA1969182C3F327500258481 /* SearchFieldView.swift in Sources */,
 				DAE8F5D42C43262B00851CA9 /* Popup.swift in Sources */,
+				F12A00022F00001000000001 /* PreviewTextSelection.swift in Sources */,
 				DA13D7DA2C1A223E00FA9E23 /* Clear.swift in Sources */,
 				DA13D7DB2C1A223E00FA9E23 /* Delete.swift in Sources */,
 				DA19691F2C3F5F0600258481 /* KeyHandlingView.swift in Sources */,
 				DA13D7DC2C1A223E00FA9E23 /* HistoryItemAppEntity.swift in Sources */,
 				DAA072D12C4089D3006DDFD2 /* VisualEffectView.swift in Sources */,
 				DA555F122CF155A8009608BD /* WrappingTextView.swift in Sources */,
+				F12A00022F00001000000003 /* SelectableTextPreviewView.swift in Sources */,
 				DAC929D7297A0E8B00814F19 /* NSPasteboard.PasteboardType+Types.swift in Sources */,
 				DA9C3C472C20B91D0056795D /* String+Identifiable.swift in Sources */,
 				DAA365E72C4C57E600A394F8 /* KeyEquivalent+Keys.swift in Sources */,

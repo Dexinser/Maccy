@@ -6,3 +6,6 @@
 "UnpinKey" = "Press {pinKey} to unpin.";
 "DeleteKey" = "Press {deleteKey} to delete.";
 "PreviewKey" = "Press {previewKey} to toggle preview.";
+"CopySelection" = "Copy selection";
+"CopyAllText" = "Copy preview text";
+"CopyItem" = "Copy original item";
