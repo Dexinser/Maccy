@@ -224,7 +224,7 @@ class SlideoutController {
     cancelAutoOpen()
 
     guard autoOpenEnabled else { return }
-    guard !autoOpenSuppressed else { return }
+    guard Defaults[.keepPreviewOpen] || !autoOpenSuppressed else { return }
     guard !state.isOpen else { return }
 
     autoOpenTask = Task { @MainActor in

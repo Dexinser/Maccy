@@ -1,3 +1,4 @@
+import Defaults
 import SwiftData
 import SwiftUI
 
@@ -57,6 +58,13 @@ struct ContentView: View {
       }
     }
     .animation(.easeInOut(duration: 0.2), value: appState.searchVisible)
+    .task(id: appState.navigator.leadSelection) {
+      guard appState.navigator.leadSelection != nil else { return }
+      guard appState.preview.state == .closed else { return }
+      guard Defaults[.keepPreviewOpen] else { return }
+
+      appState.preview.startAutoOpen()
+    }
     .environment(appState)
     .environment(modifierFlags)
     .environment(\.scenePhase, scenePhase)

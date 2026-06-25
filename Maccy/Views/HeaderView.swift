@@ -16,7 +16,8 @@ struct HeaderView: View {
       HStack(alignment: .center, spacing: 0) {
         ListHeaderView(
           searchFocused: $searchFocused,
-          searchQuery: $appState.history.searchQuery
+          searchQuery: $appState.history.searchQuery,
+          activeFilter: $appState.history.activeFilter
         )
         .padding(.horizontal, Popup.horizontalPadding)
 
