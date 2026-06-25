@@ -9,3 +9,11 @@
 "CopySelection" = "Copy selection";
 "CopyAllText" = "Copy preview text";
 "CopyItem" = "Copy original item";
+"OpenFile" = "Open file";
+"RevealInFinder" = "Reveal in Finder";
+"FileSize" = "Size:";
+"FileKind" = "Kind:";
+"ModifiedTime" = "Modified:";
+"FileUnavailable" = "File unavailable";
+"ImageDimensions" = "Dimensions:";
+"DataSize" = "Data size:";

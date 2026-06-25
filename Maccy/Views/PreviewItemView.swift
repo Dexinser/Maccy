@@ -1,75 +1,20 @@
 import KeyboardShortcuts
 import SwiftUI
 
-private func previewString(_ key: String, defaultValue: String) -> String {
-  NSLocalizedString(key, tableName: "PreviewItemView", value: defaultValue, comment: "")
-}
-
-private struct PreviewActionButton: View {
-  let systemName: String
-  let help: String
-  let action: @MainActor () -> Void
-
-  var body: some View {
-    Button(action: action) {
-      Image(systemName: systemName)
-        .frame(width: 22, height: 22)
-    }
-    .buttonStyle(.borderless)
-    .help(Text(help))
-  }
-}
-
 struct PreviewItemView: View {
   var item: HistoryItemDecorator
 
   @State private var textSelection = PreviewTextSelection()
 
   @ViewBuilder
-  func previewImage(content: () -> some View) -> some View {
-    content()
-      .aspectRatio(contentMode: .fit)
-      .clipShape(.rect(cornerRadius: 5))
-  }
-
-  @ViewBuilder
   private var previewContent: some View {
     if item.hasImage {
-      AsyncView<NSImage?, _, _> {
-        return await item.asyncGetPreviewImage()
-      } content: { image in
-        if let image = image {
-          previewImage {
-            Image(nsImage: image)
-              .resizable()
-          }
-        } else {
-          previewImage {
-            ZStack {
-              Color.gray.opacity(0.3)
-                .frame(
-                  idealWidth: HistoryItemDecorator.previewImageSize.width,
-                  idealHeight: HistoryItemDecorator.previewImageSize.height
-                )
-              Image(systemName: "photo.badge.exclamationmark")
-                .symbolRenderingMode(.multicolor)
-                .frame(alignment: .center)
-            }
-          }
-        }
-      } placeholder: {
-        previewImage {
-          ZStack {
-            Color.gray.opacity(0.3)
-              .frame(
-                idealWidth: HistoryItemDecorator.previewImageSize.width,
-                idealHeight: HistoryItemDecorator.previewImageSize.height
-              )
-            ProgressView()
-              .frame(alignment: .center)
-          }
-        }
-      }
+      ImagePreviewDetailView(item: item)
+    } else if let fileURL = item.item.fileURLs.first {
+      FilePreviewDetailView(
+        item: item,
+        info: FilePreviewInfo(url: fileURL)
+      )
     } else {
       SelectableTextPreviewView(text: item.text, selection: textSelection)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -107,24 +52,6 @@ struct PreviewItemView: View {
       }
 
       Spacer(minLength: 0)
-    }
-  }
-
-  @ViewBuilder
-  private var actionBar: some View {
-    if !item.hasImage {
-      textActions
-    } else {
-      HStack {
-        PreviewActionButton(
-          systemName: "doc.on.doc",
-          help: previewString("CopyItem", defaultValue: "Copy original item")
-        ) {
-          Clipboard.shared.copy(item.item)
-        }
-
-        Spacer(minLength: 0)
-      }
     }
   }
 
@@ -166,7 +93,9 @@ struct PreviewItemView: View {
 
       Spacer(minLength: 0)
 
-      actionBar
+      if !item.hasImage && item.item.fileURLs.isEmpty {
+        textActions
+      }
 
       Divider()
 

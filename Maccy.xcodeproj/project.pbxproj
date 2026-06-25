@@ -31,6 +31,11 @@
 		2F8B9DE62C5D6E5D0046EF69 /* NSPoint+DefaultsSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8B9DE52C5D6E5D0046EF69 /* NSPoint+DefaultsSerializable.swift */; };
 		2F9B42EF2F1A494C006548E5 /* ListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9B42EE2F1A4948006548E5 /* ListHeaderView.swift */; };
 		2F9B42F12F1A499D006548E5 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9B42F02F1A4999006548E5 /* ToolbarView.swift */; };
+		F12A00042F00001000000001 /* FilePreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00042F00001000000002 /* FilePreviewInfo.swift */; };
+		F12A00062F00001000000001 /* ImagePreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00062F00001000000002 /* ImagePreviewInfo.swift */; };
+		F12A00052F00001000000001 /* FilePreviewDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00052F00001000000002 /* FilePreviewDetailView.swift */; };
+		F12A00052F00001000000003 /* ImagePreviewDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00052F00001000000004 /* ImagePreviewDetailView.swift */; };
+		F12A00052F00001000000005 /* PreviewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00052F00001000000006 /* PreviewActionButton.swift */; };
 		F12A00022F00001000000001 /* PreviewTextSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00022F00001000000002 /* PreviewTextSelection.swift */; };
 		F12A00022F00001000000003 /* SelectableTextPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00022F00001000000004 /* SelectableTextPreviewView.swift */; };
 		2FA81FE02E43D9B700C12F92 /* Dictionary+RemoveItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA81FDF2E43D9A600C12F92 /* Dictionary+RemoveItem.swift */; };
@@ -79,6 +84,8 @@
 		DA360DB31E3DF137005C6F6B /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA360DB21E3DF137005C6F6B /* HistoryTests.swift */; };
 		DA384E86232746D800603999 /* SearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA384E85232746D800603999 /* SearchTests.swift */; };
 		F11A11111111111111111111 /* ClipboardFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11A11111111111111111112 /* ClipboardFilterTests.swift */; };
+		F12A00032F00001000000001 /* FilePreviewInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00032F00001000000002 /* FilePreviewInfoTests.swift */; };
+		F12A00062F00001000000003 /* ImagePreviewInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00062F00001000000004 /* ImagePreviewInfoTests.swift */; };
 		F12A00012F00001000000005 /* PreviewTextSelectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */; };
 		DA3BCB8E2C3E015000B01BC1 /* ModifierFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BCB8D2C3E015000B01BC1 /* ModifierFlags.swift */; };
 		DA3BCB922C3EEC3C00B01BC1 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BCB912C3EEC3C00B01BC1 /* History.swift */; };
@@ -208,6 +215,11 @@
 		2F8B9DE52C5D6E5D0046EF69 /* NSPoint+DefaultsSerializable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPoint+DefaultsSerializable.swift"; sourceTree = "<group>"; };
 		2F9B42EE2F1A4948006548E5 /* ListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListHeaderView.swift; sourceTree = "<group>"; };
 		2F9B42F02F1A4999006548E5 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		F12A00042F00001000000002 /* FilePreviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewInfo.swift; sourceTree = "<group>"; };
+		F12A00062F00001000000002 /* ImagePreviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewInfo.swift; sourceTree = "<group>"; };
+		F12A00052F00001000000002 /* FilePreviewDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewDetailView.swift; sourceTree = "<group>"; };
+		F12A00052F00001000000004 /* ImagePreviewDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewDetailView.swift; sourceTree = "<group>"; };
+		F12A00052F00001000000006 /* PreviewActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewActionButton.swift; sourceTree = "<group>"; };
 		F12A00022F00001000000002 /* PreviewTextSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewTextSelection.swift; sourceTree = "<group>"; };
 		F12A00022F00001000000004 /* SelectableTextPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableTextPreviewView.swift; sourceTree = "<group>"; };
 		2FA81FDF2E43D9A600C12F92 /* Dictionary+RemoveItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+RemoveItem.swift"; sourceTree = "<group>"; };
@@ -295,6 +307,8 @@
 		DA360DB41E3DF137005C6F6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA384E85232746D800603999 /* SearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTests.swift; sourceTree = "<group>"; };
 		F11A11111111111111111112 /* ClipboardFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardFilterTests.swift; sourceTree = "<group>"; };
+		F12A00032F00001000000002 /* FilePreviewInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewInfoTests.swift; sourceTree = "<group>"; };
+		F12A00062F00001000000004 /* ImagePreviewInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewInfoTests.swift; sourceTree = "<group>"; };
 		F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewTextSelectionTests.swift; sourceTree = "<group>"; };
 		DA3873FA2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/AdvancedSettings.strings; sourceTree = "<group>"; };
 		DA3873FB2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/AppearanceSettings.strings; sourceTree = "<group>"; };
@@ -686,6 +700,7 @@
 				DAA072DE2C41C63C006DDFD2 /* ConfirmationView.swift */,
 				DA243D112C2F64820012A27F /* ContentView.swift */,
 				2F0EC7902F000001003E2EA9 /* ClipboardFilterPickerView.swift */,
+				F12A00052F00001000000002 /* FilePreviewDetailView.swift */,
 				DAA072DC2C41C61F006DDFD2 /* FooterItemView.swift */,
 				DAA072E02C41C6E8006DDFD2 /* FooterView.swift */,
 				DA1969192C3F369800258481 /* HeaderView.swift */,
@@ -693,6 +708,7 @@
 				DA1969112C3F0DD200258481 /* HistoryItemView.swift */,
 				DAA072D42C40AC52006DDFD2 /* HistoryListView.swift */,
 				2F0EC7882E7743D9003E2EA9 /* HoverSelectionModifier.swift */,
+				F12A00052F00001000000004 /* ImagePreviewDetailView.swift */,
 				DA19690D2C3EEFA900258481 /* KeyboardShortcutView.swift */,
 				DA19691E2C3F5F0600258481 /* KeyHandlingView.swift */,
 				2F9B42EE2F1A4948006548E5 /* ListHeaderView.swift */,
@@ -705,6 +721,7 @@
 				2F0EC7842E77407C003E2EA9 /* PasteStackView.swift */,
 				2F0EC77A2E772899003E2EA9 /* PinsView.swift */,
 				DA5E627E2C39E53F00F4C710 /* PreviewItemView.strings */,
+				F12A00052F00001000000006 /* PreviewActionButton.swift */,
 				DA1969132C3F11D600258481 /* PreviewItemView.swift */,
 				DA1969172C3F327500258481 /* SearchFieldView.swift */,
 				F12A00022F00001000000004 /* SelectableTextPreviewView.swift */,
@@ -733,9 +750,11 @@
 				F11A11111111111111111112 /* ClipboardFilterTests.swift */,
 				DA3CE7FF1E44A62500B3AA98 /* ClipboardTests.swift */,
 				DAE2850123225BD90080E394 /* ColorImageTests.swift */,
+				F12A00032F00001000000002 /* FilePreviewInfoTests.swift */,
 				DA360DB21E3DF137005C6F6B /* HistoryTests.swift */,
 				DA1EDE422045B35300479723 /* HistoryDecoratorTests.swift */,
 				DAFE2DE8268A9B1B00990986 /* HistoryItemTests.swift */,
+				F12A00062F00001000000004 /* ImagePreviewInfoTests.swift */,
 				F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */,
 				DA384E85232746D800603999 /* SearchTests.swift */,
 				DA696BD12401EEE900DE80CF /* SorterTests.swift */,
@@ -836,9 +855,11 @@
 				DA0EF1871E444B2A00E58577 /* Clipboard.swift */,
 				F11A11111111111111111114 /* ClipboardFilter.swift */,
 				DAE284FF232257D20080E394 /* ColorImage.swift */,
+				F12A00042F00001000000002 /* FilePreviewInfo.swift */,
 				DAA54BF92C3C951900B7FDD8 /* FloatingPanel.swift */,
 				DA689FC92C1D18890009B887 /* HighlightMatch.swift */,
 				DA1969202C3F6C6800258481 /* HistoryItemAction.swift */,
+				F12A00062F00001000000002 /* ImagePreviewInfo.swift */,
 				2F578C3C2EFFE8400088B759 /* ItemsProtocol.swift */,
 				F12A00022F00001000000002 /* PreviewTextSelection.swift */,
 				DABDE97E2974706C005B32E9 /* KeyboardLayout.swift */,
@@ -1077,6 +1098,8 @@
 			files = (
 				DAFE2DE9268A9B1B00990986 /* HistoryItemTests.swift in Sources */,
 				F11A11111111111111111111 /* ClipboardFilterTests.swift in Sources */,
+				F12A00032F00001000000001 /* FilePreviewInfoTests.swift in Sources */,
+				F12A00062F00001000000003 /* ImagePreviewInfoTests.swift in Sources */,
 				F12A00012F00001000000005 /* PreviewTextSelectionTests.swift in Sources */,
 				DA3CE8001E44A62500B3AA98 /* ClipboardTests.swift in Sources */,
 				DA1EDE432045B35300479723 /* HistoryDecoratorTests.swift in Sources */,
@@ -1093,6 +1116,9 @@
 			files = (
 				DA19691C2C3F3EAC00258481 /* Collection+Surrounding.swift in Sources */,
 				F11A11111111111111111113 /* ClipboardFilter.swift in Sources */,
+				F12A00042F00001000000001 /* FilePreviewInfo.swift in Sources */,
+				F12A00062F00001000000001 /* ImagePreviewInfo.swift in Sources */,
+				F12A00052F00001000000001 /* FilePreviewDetailView.swift in Sources */,
 				DA1969142C3F11D600258481 /* PreviewItemView.swift in Sources */,
 				2FF2E9502E7808470093D72C /* AppImageView.swift in Sources */,
 				DAA072D52C40AC52006DDFD2 /* HistoryListView.swift in Sources */,
@@ -1107,6 +1133,7 @@
 				DA243D142C2F66DD0012A27F /* Storage.swift in Sources */,
 				2F0EC7812E773F1D003E2EA9 /* PasteStack.swift in Sources */,
 				2F0EC7912F000001003E2EA9 /* ClipboardFilterPickerView.swift in Sources */,
+				F12A00052F00001000000003 /* ImagePreviewDetailView.swift in Sources */,
 				DA5078992CF2676B00215488 /* MouseMovedViewModifer.swift in Sources */,
 				DA19690E2C3EEFA900258481 /* KeyboardShortcutView.swift in Sources */,
 				DA243D122C2F64830012A27F /* ContentView.swift in Sources */,
@@ -1127,6 +1154,7 @@
 				DA13D7DB2C1A223E00FA9E23 /* Delete.swift in Sources */,
 				DA19691F2C3F5F0600258481 /* KeyHandlingView.swift in Sources */,
 				DA13D7DC2C1A223E00FA9E23 /* HistoryItemAppEntity.swift in Sources */,
+				F12A00052F00001000000005 /* PreviewActionButton.swift in Sources */,
 				DAA072D12C4089D3006DDFD2 /* VisualEffectView.swift in Sources */,
 				DA555F122CF155A8009608BD /* WrappingTextView.swift in Sources */,
 				F12A00022F00001000000003 /* SelectableTextPreviewView.swift in Sources */,
