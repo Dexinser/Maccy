@@ -190,10 +190,12 @@ class SlideoutController {
             }
           }
           context.duration = Self.animationDuration
-          window.animator().setFrame(
-            NSRect(origin: newOrigin, size: newSize),
-            display: true
+          let targetFrame = NSRect(origin: newOrigin, size: newSize)
+          let confinedFrame = WindowFrameConfinement.confine(
+            frame: targetFrame,
+            in: NSScreen.screens.map(\.visibleFrame)
           )
+          window.animator().setFrame(confinedFrame, display: true)
         }
       }
     } completion: {

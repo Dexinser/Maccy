@@ -76,6 +76,18 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertEqual(itemDecorator.thumbnailImage!.size, NSSize(width: 40, height: 40))
   }
 
+  func testResizedImageIsBitmapBackedAndBoundedToTargetSize() throws {
+    let image = try bitmapImage(width: 240, height: 120)
+
+    let resized = image.resized(to: NSSize(width: 60, height: 60))
+
+    XCTAssertEqual(resized.size, NSSize(width: 60, height: 30))
+    let bitmap = resized.representations.compactMap { $0 as? NSBitmapImageRep }.first
+    XCTAssertNotNil(bitmap)
+    XCTAssertLessThanOrEqual(bitmap?.pixelsWide ?? .max, 60)
+    XCTAssertLessThanOrEqual(bitmap?.pixelsHigh ?? .max, 60)
+  }
+
   func testFile() {
     let url = URL(fileURLWithPath: "/tmp/foo.bar")
     let itemDecorator = historyItemDecorator(url)
@@ -217,6 +229,26 @@ class HistoryItemDecoratorTests: XCTestCase {
     item.numberOfCopies = 2
 
     return HistoryItemDecorator(item)
+  }
+
+  private func bitmapImage(width: Int, height: Int) throws -> NSImage {
+    let bitmap = NSBitmapImageRep(
+      bitmapDataPlanes: nil,
+      pixelsWide: width,
+      pixelsHigh: height,
+      bitsPerSample: 8,
+      samplesPerPixel: 4,
+      hasAlpha: true,
+      isPlanar: false,
+      colorSpaceName: .deviceRGB,
+      bitmapFormat: [.alphaFirst],
+      bytesPerRow: 0,
+      bitsPerPixel: 0
+    )!
+
+    let image = NSImage(size: NSSize(width: width, height: height))
+    image.addRepresentation(bitmap)
+    return image
   }
 
   // swiftlint:disable:next identifier_name

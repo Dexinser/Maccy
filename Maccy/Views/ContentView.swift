@@ -6,6 +6,7 @@ struct ContentView: View {
   @State private var appState = AppState.shared
   @State private var modifierFlags = ModifierFlags()
   @State private var scenePhase: ScenePhase = .background
+  @Default(.showFooter) private var showFooter
 
   @FocusState private var searchFocused: Bool
 
@@ -31,7 +32,9 @@ struct ContentView: View {
                 searchFocused: $searchFocused
               )
 
-              FooterView(footer: appState.footer)
+              if showFooter {
+                FooterView(footer: appState.footer)
+              }
             }
             .animation(.default.speed(3), value: appState.history.items)
             .animation(
@@ -42,6 +45,12 @@ struct ContentView: View {
             .onAppear {
               searchFocused = true
             }
+            .onChange(of: showFooter) {
+              if !showFooter {
+                appState.popup.footerHeight = 0
+                appState.footer.selectedItem = nil
+              }
+            }
             .onMouseMove {
               appState.navigator.isKeyboardNavigating = false
             }
@@ -50,6 +59,13 @@ struct ContentView: View {
           }
           .frame(minHeight: 0)
           .layoutPriority(1)
+        }
+        .background {
+          ForEach(appState.footer.items) { item in
+            ConfirmationView(item: item) {
+              Color.clear.frame(width: 0, height: 0)
+            }
+          }
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

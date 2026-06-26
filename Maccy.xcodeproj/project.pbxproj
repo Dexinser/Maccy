@@ -38,6 +38,11 @@
 		F12A00052F00001000000005 /* PreviewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00052F00001000000006 /* PreviewActionButton.swift */; };
 		F12A00022F00001000000001 /* PreviewTextSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00022F00001000000002 /* PreviewTextSelection.swift */; };
 		F12A00022F00001000000003 /* SelectableTextPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00022F00001000000004 /* SelectableTextPreviewView.swift */; };
+		F12A00072F00001000000001 /* WindowFrameConfinement.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00072F00001000000002 /* WindowFrameConfinement.swift */; };
+		F12A00082F00001000000001 /* WindowFrameConfinementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00082F00001000000002 /* WindowFrameConfinementTests.swift */; };
+		F12A00092F00001000000001 /* AsyncViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00092F00001000000002 /* AsyncViewModelTests.swift */; };
+		F12A000A2F00001000000001 /* FooterVisibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A000A2F00001000000002 /* FooterVisibilityTests.swift */; };
+		F12A000B2F00001000000001 /* ImageZoomWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A000B2F00001000000002 /* ImageZoomWindowController.swift */; };
 		2FA81FE02E43D9B700C12F92 /* Dictionary+RemoveItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA81FDF2E43D9A600C12F92 /* Dictionary+RemoveItem.swift */; };
 		2FB5BCA02CD8F73F008B33F4 /* ApplicationImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB5BC9F2CD8F73C008B33F4 /* ApplicationImage.swift */; };
 		2FF2E94E2E774B5B0093D72C /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF2E94D2E774B570093D72C /* NavigationManager.swift */; };
@@ -515,6 +520,11 @@
 		DAA365E52C4C148C00A394F8 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/PinsSettings.strings; sourceTree = "<group>"; };
 		DAA365E62C4C57E600A394F8 /* KeyEquivalent+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyEquivalent+Keys.swift"; sourceTree = "<group>"; };
 		DAA54BF92C3C951900B7FDD8 /* FloatingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanel.swift; sourceTree = "<group>"; };
+		F12A00072F00001000000002 /* WindowFrameConfinement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameConfinement.swift; sourceTree = "<group>"; };
+		F12A00082F00001000000002 /* WindowFrameConfinementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameConfinementTests.swift; sourceTree = "<group>"; };
+		F12A00092F00001000000002 /* AsyncViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncViewModelTests.swift; sourceTree = "<group>"; };
+		F12A000A2F00001000000002 /* FooterVisibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterVisibilityTests.swift; sourceTree = "<group>"; };
+		F12A000B2F00001000000002 /* ImageZoomWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageZoomWindowController.swift; sourceTree = "<group>"; };
 		DAA5ACB12C1B3F8800B58513 /* GeneralSettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsPane.swift; sourceTree = "<group>"; };
 		DAA5ACB42C1B803000B58513 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/GeneralSettings.strings; sourceTree = "<group>"; };
 		DAA5ACB72C1BA34800B58513 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/GeneralSettings.strings; sourceTree = "<group>"; };
@@ -747,9 +757,11 @@
 			isa = PBXGroup;
 			children = (
 				DA48AE852A5F0077006D4894 /* Fixtures */,
+				F12A00092F00001000000002 /* AsyncViewModelTests.swift */,
 				F11A11111111111111111112 /* ClipboardFilterTests.swift */,
 				DA3CE7FF1E44A62500B3AA98 /* ClipboardTests.swift */,
 				DAE2850123225BD90080E394 /* ColorImageTests.swift */,
+				F12A000A2F00001000000002 /* FooterVisibilityTests.swift */,
 				F12A00032F00001000000002 /* FilePreviewInfoTests.swift */,
 				DA360DB21E3DF137005C6F6B /* HistoryTests.swift */,
 				DA1EDE422045B35300479723 /* HistoryDecoratorTests.swift */,
@@ -758,6 +770,7 @@
 				F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */,
 				DA384E85232746D800603999 /* SearchTests.swift */,
 				DA696BD12401EEE900DE80CF /* SorterTests.swift */,
+				F12A00082F00001000000002 /* WindowFrameConfinementTests.swift */,
 				DA360DB41E3DF137005C6F6B /* Info.plist */,
 			);
 			path = MaccyTests;
@@ -857,9 +870,11 @@
 				DAE284FF232257D20080E394 /* ColorImage.swift */,
 				F12A00042F00001000000002 /* FilePreviewInfo.swift */,
 				DAA54BF92C3C951900B7FDD8 /* FloatingPanel.swift */,
+				F12A00072F00001000000002 /* WindowFrameConfinement.swift */,
 				DA689FC92C1D18890009B887 /* HighlightMatch.swift */,
 				DA1969202C3F6C6800258481 /* HistoryItemAction.swift */,
 				F12A00062F00001000000002 /* ImagePreviewInfo.swift */,
+				F12A000B2F00001000000002 /* ImageZoomWindowController.swift */,
 				2F578C3C2EFFE8400088B759 /* ItemsProtocol.swift */,
 				F12A00022F00001000000002 /* PreviewTextSelection.swift */,
 				DABDE97E2974706C005B32E9 /* KeyboardLayout.swift */,
@@ -1097,15 +1112,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAFE2DE9268A9B1B00990986 /* HistoryItemTests.swift in Sources */,
+				F12A00092F00001000000001 /* AsyncViewModelTests.swift in Sources */,
 				F11A11111111111111111111 /* ClipboardFilterTests.swift in Sources */,
 				F12A00032F00001000000001 /* FilePreviewInfoTests.swift in Sources */,
 				F12A00062F00001000000003 /* ImagePreviewInfoTests.swift in Sources */,
 				F12A00012F00001000000005 /* PreviewTextSelectionTests.swift in Sources */,
 				DA3CE8001E44A62500B3AA98 /* ClipboardTests.swift in Sources */,
+				F12A000A2F00001000000001 /* FooterVisibilityTests.swift in Sources */,
 				DA1EDE432045B35300479723 /* HistoryDecoratorTests.swift in Sources */,
 				DAE2850223225BD90080E394 /* ColorImageTests.swift in Sources */,
 				DA384E86232746D800603999 /* SearchTests.swift in Sources */,
 				DA696BD22401EEE900DE80CF /* SorterTests.swift in Sources */,
+				F12A00082F00001000000001 /* WindowFrameConfinementTests.swift in Sources */,
 				DA360DB31E3DF137005C6F6B /* HistoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1134,6 +1152,7 @@
 				2F0EC7812E773F1D003E2EA9 /* PasteStack.swift in Sources */,
 				2F0EC7912F000001003E2EA9 /* ClipboardFilterPickerView.swift in Sources */,
 				F12A00052F00001000000003 /* ImagePreviewDetailView.swift in Sources */,
+				F12A000B2F00001000000001 /* ImageZoomWindowController.swift in Sources */,
 				DA5078992CF2676B00215488 /* MouseMovedViewModifer.swift in Sources */,
 				DA19690E2C3EEFA900258481 /* KeyboardShortcutView.swift in Sources */,
 				DA243D122C2F64830012A27F /* ContentView.swift in Sources */,
@@ -1150,6 +1169,7 @@
 				DA1969182C3F327500258481 /* SearchFieldView.swift in Sources */,
 				DAE8F5D42C43262B00851CA9 /* Popup.swift in Sources */,
 				F12A00022F00001000000001 /* PreviewTextSelection.swift in Sources */,
+				F12A00072F00001000000001 /* WindowFrameConfinement.swift in Sources */,
 				DA13D7DA2C1A223E00FA9E23 /* Clear.swift in Sources */,
 				DA13D7DB2C1A223E00FA9E23 /* Delete.swift in Sources */,
 				DA19691F2C3F5F0600258481 /* KeyHandlingView.swift in Sources */,

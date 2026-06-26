@@ -74,7 +74,8 @@ class FloatingPanel<Content: View>: NSPanel, NSWindowDelegate {
   func open(height: CGFloat, at popupPosition: PopupPosition = Defaults[.popupPosition]) {
     let size = Defaults[.windowSize]
     setContentSize(NSSize(width: min(frame.width, size.width), height: min(height, size.height)))
-    setFrameOrigin(popupPosition.origin(size: frame.size, statusBarButton: statusBarButton))
+    let origin = popupPosition.origin(size: frame.size, statusBarButton: statusBarButton)
+    setFrame(confine(frame: NSRect(origin: origin, size: frame.size)), display: true)
     orderFrontRegardless()
     makeKey()
     isPresented = true
@@ -91,11 +92,16 @@ class FloatingPanel<Content: View>: NSPanel, NSWindowDelegate {
     newSize.height = newHeight
     var newOrigin = frame.origin
     newOrigin.y += (frame.height - newSize.height)
+    let newFrame = confine(frame: NSRect(origin: newOrigin, size: newSize))
 
     NSAnimationContext.runAnimationGroup { (context) in
       context.duration = 0.2
-      animator().setFrame(NSRect(origin: newOrigin, size: newSize), display: true)
+      animator().setFrame(newFrame, display: true)
     }
+  }
+
+  private func confine(frame: NSRect) -> NSRect {
+    return WindowFrameConfinement.confine(frame: frame, in: NSScreen.screens.map(\.visibleFrame))
   }
 
   func determinePreviewPlacement() {

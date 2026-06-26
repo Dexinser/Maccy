@@ -8,11 +8,7 @@ struct ConfirmationView<Content: View>: View {
     if let confirmation = item.confirmation, let suppressConfirmation = item.suppressConfirmation {
       content()
         .onTapGesture {
-          if suppressConfirmation.wrappedValue {
-            item.action()
-          } else {
-            item.showConfirmation = true
-          }
+          item.performAction()
         }
         .confirmationDialog(confirmation.message, isPresented: $item.showConfirmation) {
           Text(confirmation.comment)
@@ -25,7 +21,7 @@ struct ConfirmationView<Content: View>: View {
     } else {
       content()
         .onTapGesture {
-          item.action()
+          item.performAction()
         }
     }
   }

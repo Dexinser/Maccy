@@ -2,6 +2,13 @@ import SwiftUI
 
 struct ImagePreviewDetailView: View {
   let item: HistoryItemDecorator
+  @State private var currentItemID: UUID
+  @State private var zoomTask: Task<Void, Never>?
+
+  init(item: HistoryItemDecorator) {
+    self.item = item
+    _currentItemID = State(initialValue: item.id)
+  }
 
   private var info: ImagePreviewInfo {
     ImagePreviewInfo(data: item.item.imageData)
@@ -15,13 +22,21 @@ struct ImagePreviewDetailView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
-      AsyncView<NSImage?, _, _> {
+      AsyncView<NSImage?, _, _>(id: item.id) {
         return await item.asyncGetPreviewImage()
       } content: { image in
         if let image = image {
           previewImage {
             Image(nsImage: image)
               .resizable()
+          }
+          .onTapGesture {
+            guard currentItemID == item.id else { return }
+            _ = ImageZoomWindowController.show(
+              image: image,
+              title: item.title,
+              owner: AppState.shared.appDelegate?.panel
+            )
           }
         } else {
           unavailableImage
@@ -48,6 +63,26 @@ struct ImagePreviewDetailView: View {
           Clipboard.shared.copy(item.item)
         }
 
+        PreviewActionButton(
+          systemName: "magnifyingglass",
+          help: previewString("ZoomImage", defaultValue: "Zoom image")
+        ) {
+          let requestedItemID = item.id
+          zoomTask?.cancel()
+          zoomTask = Task { @MainActor in
+            guard let previewImage = await item.asyncGetPreviewImage(),
+                  !Task.isCancelled,
+                  currentItemID == requestedItemID
+            else { return }
+
+            _ = ImageZoomWindowController.show(
+              image: previewImage,
+              title: item.title,
+              owner: AppState.shared.appDelegate?.panel
+            )
+          }
+        }
+
         Spacer(minLength: 0)
       }
 
@@ -62,6 +97,15 @@ struct ImagePreviewDetailView: View {
       }
       .font(.caption)
       .foregroundStyle(.secondary)
+    }
+    .onChange(of: item.id) {
+      zoomTask?.cancel()
+      zoomTask = nil
+      currentItemID = item.id
+    }
+    .onDisappear {
+      zoomTask?.cancel()
+      zoomTask = nil
     }
   }
 

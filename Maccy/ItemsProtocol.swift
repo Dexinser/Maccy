@@ -41,9 +41,11 @@ extension ItemsContainer where Item: HasVisibility {
 
 extension ItemsContainer where Item: HasVisibility, Item: Equatable {
   func visibleItem(before: Item) -> Item? {
+    guard containerVisible else { return nil }
     return self.items.item(before: before, where: \.isVisible)
   }
   func visibleItem(after: Item) -> Item? {
+    guard containerVisible else { return nil }
     return self.items.item(after: after, where: \.isVisible)
   }
 }

@@ -119,7 +119,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       Defaults.reset(.migrations)
 
       // Inverse hide* configuration keys.
-      Defaults[.showFooter] = !UserDefaults.standard.bool(forKey: "hideFooter")
+      if UserDefaults.standard.object(forKey: "hideFooter") != nil {
+        Defaults[.showFooter] = !UserDefaults.standard.bool(forKey: "hideFooter")
+      }
       Defaults[.showSearch] = !UserDefaults.standard.bool(forKey: "hideSearch")
       Defaults[.showTitle] = !UserDefaults.standard.bool(forKey: "hideTitle")
       UserDefaults.standard.removeObject(forKey: "hideFooter")

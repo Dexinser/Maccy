@@ -80,5 +80,7 @@ class Footer: ItemsContainer {
         AppState.shared.quit()
       }
     ]
+
+    items[1].isVisible = false
   }
 }

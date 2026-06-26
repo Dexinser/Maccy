@@ -17,3 +17,8 @@
 "FileUnavailable" = "File unavailable";
 "ImageDimensions" = "Dimensions:";
 "DataSize" = "Data size:";
+"ZoomImage" = "Zoom image";
+"ZoomInImage" = "Zoom in";
+"ZoomOutImage" = "Zoom out";
+"ActualSizeImage" = "Actual size";
+"CloseImagePreview" = "Close";
