@@ -31,8 +31,11 @@ pkill -x Maccy 2>/dev/null || true
 mkdir -p "$BACKUP_DIR"
 if [[ -d "$INSTALL_APP" ]]; then
   BACKUP_APP="$BACKUP_DIR/Maccy-$(date +%Y%m%d-%H%M%S).app"
+  BACKUP_ZIP="${BACKUP_APP%.app}.zip"
   ditto "$INSTALL_APP" "$BACKUP_APP"
-  echo "Backed up existing app to $BACKUP_APP"
+  ditto -c -k --sequesterRsrc --keepParent "$BACKUP_APP" "$BACKUP_ZIP"
+  rm -rf "$BACKUP_APP"
+  echo "Backed up existing app to $BACKUP_ZIP"
 fi
 
 rm -rf "$INSTALL_APP"
