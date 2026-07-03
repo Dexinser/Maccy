@@ -221,8 +221,13 @@ enum ImageZoomScale {
 }
 
 enum ImageZoomScrollWheel {
-  static func shouldZoom(scrollingDeltaY: CGFloat, hasPreciseScrollingDeltas: Bool) -> Bool {
-    scrollingDeltaY != 0 && !hasPreciseScrollingDeltas
+  static func shouldZoom(
+    scrollingDeltaY: CGFloat,
+    hasPreciseScrollingDeltas _: Bool,
+    phase: NSEvent.Phase,
+    momentumPhase: NSEvent.Phase
+  ) -> Bool {
+    scrollingDeltaY != 0 && phase.isEmpty && momentumPhase.isEmpty
   }
 }
 
@@ -342,7 +347,9 @@ final class PannableScrollView: NSScrollView {
   override func scrollWheel(with event: NSEvent) {
     guard ImageZoomScrollWheel.shouldZoom(
       scrollingDeltaY: event.scrollingDeltaY,
-      hasPreciseScrollingDeltas: event.hasPreciseScrollingDeltas
+      hasPreciseScrollingDeltas: event.hasPreciseScrollingDeltas,
+      phase: event.phase,
+      momentumPhase: event.momentumPhase
     ), let onScrollZoom else {
       super.scrollWheel(with: event)
       return

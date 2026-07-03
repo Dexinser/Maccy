@@ -114,9 +114,36 @@ final class ImagePreviewInfoTests: XCTestCase {
 
   @MainActor
   func testOnlyPhysicalMouseWheelEventsTriggerZoom() {
-    XCTAssertTrue(ImageZoomScrollWheel.shouldZoom(scrollingDeltaY: 1, hasPreciseScrollingDeltas: false))
-    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(scrollingDeltaY: 1, hasPreciseScrollingDeltas: true))
-    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(scrollingDeltaY: 0, hasPreciseScrollingDeltas: false))
+    XCTAssertTrue(ImageZoomScrollWheel.shouldZoom(
+      scrollingDeltaY: 1,
+      hasPreciseScrollingDeltas: false,
+      phase: [],
+      momentumPhase: []
+    ))
+    XCTAssertTrue(ImageZoomScrollWheel.shouldZoom(
+      scrollingDeltaY: 1,
+      hasPreciseScrollingDeltas: true,
+      phase: [],
+      momentumPhase: []
+    ))
+    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(
+      scrollingDeltaY: 1,
+      hasPreciseScrollingDeltas: true,
+      phase: .changed,
+      momentumPhase: []
+    ))
+    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(
+      scrollingDeltaY: 1,
+      hasPreciseScrollingDeltas: true,
+      phase: [],
+      momentumPhase: .changed
+    ))
+    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(
+      scrollingDeltaY: 0,
+      hasPreciseScrollingDeltas: false,
+      phase: [],
+      momentumPhase: []
+    ))
   }
 
   @MainActor
