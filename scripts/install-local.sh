@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_APP="/Applications/Maccy.app"
 BACKUP_DIR="${ROOT_DIR}/backups"
+DERIVED_DATA_DIR="${HOME}/Library/Developer/Xcode/DerivedData"
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
 
 cd "$ROOT_DIR"
 
@@ -42,6 +44,15 @@ rm -rf "$INSTALL_APP"
 ditto "$BUILD_APP" "$INSTALL_APP"
 /usr/bin/codesign --force --deep --sign - "$INSTALL_APP"
 xattr -dr com.apple.quarantine "$INSTALL_APP" 2>/dev/null || true
+
+for extra_app in "$BUILD_APP" "$DERIVED_DATA_DIR"/Maccy-*/Build/Products/*/Maccy.app; do
+  if [[ -d "$extra_app" && "$extra_app" != "$INSTALL_APP" ]]; then
+    "$LSREGISTER" -u "$extra_app" 2>/dev/null || true
+    rm -rf "$extra_app"
+  fi
+done
+"$LSREGISTER" -f -R -trusted "$INSTALL_APP" 2>/dev/null || true
+mdimport "$INSTALL_APP" 2>/dev/null || true
 
 defaults write org.p0deje.Maccy showFooter -bool false
 defaults write org.p0deje.Maccy keepPreviewOpen -bool true
