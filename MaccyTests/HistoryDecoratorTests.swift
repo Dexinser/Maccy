@@ -40,6 +40,16 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertNil(itemDecorator.thumbnailImage)
   }
 
+  func testTextPreviewUsesFullClipboardTextEvenWhenTitleIsShortened() {
+    let suffix = " unique text after preview cutoff"
+    let text = String(repeating: "a", count: 12_000) + suffix
+    let itemDecorator = historyItemDecorator(text)
+
+    XCTAssertFalse(itemDecorator.title.contains(suffix))
+    XCTAssertEqual(itemDecorator.text, text)
+    XCTAssertTrue(itemDecorator.text.contains(suffix))
+  }
+
   func testRTF() {
     let rtf = NSAttributedString(string: "foo").rtf(
       from: NSRange(0...2),
