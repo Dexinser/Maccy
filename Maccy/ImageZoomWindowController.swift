@@ -148,14 +148,14 @@ private struct ImageZoomView: View {
           systemName: "minus.magnifyingglass",
           help: previewString("ZoomOutImage", defaultValue: "Zoom out")
         ) {
-          scale = max(0.25, scale - 0.25)
+          scale = ImageZoomScale.zoomedOut(from: scale)
         }
 
         PreviewActionButton(
           systemName: "plus.magnifyingglass",
           help: previewString("ZoomInImage", defaultValue: "Zoom in")
         ) {
-          scale = min(6, scale + 0.25)
+          scale = ImageZoomScale.zoomedIn(from: scale)
         }
 
         PreviewActionButton(
@@ -179,16 +179,57 @@ private struct ImageZoomView: View {
       ImageZoomScrollView(
         image: image,
         frameSize: ImageZoomWindowController.imageFrameSize(for: image, scale: scale)
-      )
+      ) { scrollDeltaY in
+        let updatedScale = ImageZoomScale.scale(afterScrollDeltaY: scrollDeltaY, currentScale: scale)
+        guard updatedScale != scale else {
+          return false
+        }
+
+        scale = updatedScale
+        return true
+      }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .background(Color(nsColor: .textBackgroundColor))
     }
   }
 }
 
+enum ImageZoomScale {
+  private static let minimum: CGFloat = 0.25
+  private static let maximum: CGFloat = 6
+  private static let step: CGFloat = 0.25
+
+  static func zoomedIn(from scale: CGFloat) -> CGFloat {
+    min(maximum, scale + step)
+  }
+
+  static func zoomedOut(from scale: CGFloat) -> CGFloat {
+    max(minimum, scale - step)
+  }
+
+  static func scale(afterScrollDeltaY scrollDeltaY: CGFloat, currentScale: CGFloat) -> CGFloat {
+    if scrollDeltaY > 0 {
+      return zoomedIn(from: currentScale)
+    }
+
+    if scrollDeltaY < 0 {
+      return zoomedOut(from: currentScale)
+    }
+
+    return currentScale
+  }
+}
+
+enum ImageZoomScrollWheel {
+  static func shouldZoom(scrollingDeltaY: CGFloat, hasPreciseScrollingDeltas: Bool) -> Bool {
+    scrollingDeltaY != 0 && !hasPreciseScrollingDeltas
+  }
+}
+
 struct ImageZoomScrollView: NSViewRepresentable {
   let image: NSImage
   let frameSize: NSSize
+  let onScrollZoom: (CGFloat) -> Bool
 
   func makeCoordinator() -> Coordinator {
     Coordinator()
@@ -196,6 +237,8 @@ struct ImageZoomScrollView: NSViewRepresentable {
 
   func makeNSView(context: Context) -> NSScrollView {
     let scrollView = PannableScrollView()
+    context.coordinator.onScrollZoom = onScrollZoom
+    scrollView.onScrollZoom = context.coordinator.handleScrollZoom
     scrollView.borderType = .noBorder
     scrollView.drawsBackground = true
     scrollView.backgroundColor = .textBackgroundColor
@@ -214,6 +257,11 @@ struct ImageZoomScrollView: NSViewRepresentable {
   func updateNSView(_ scrollView: NSScrollView, context: Context) {
     guard let documentView = scrollView.documentView as? ImageZoomDocumentView else { return }
 
+    context.coordinator.onScrollZoom = onScrollZoom
+    if let scrollView = scrollView as? PannableScrollView {
+      scrollView.onScrollZoom = context.coordinator.handleScrollZoom
+    }
+
     documentView.configure(image: image, imageSize: frameSize)
     scrollView.reflectScrolledClipView(scrollView.contentView)
     context.coordinator.documentView = documentView
@@ -231,12 +279,18 @@ struct ImageZoomScrollView: NSViewRepresentable {
 
     return NSPoint(
       x: min(max(currentOrigin.x - dragDelta.x, 0), maxX),
-      y: min(max(currentOrigin.y - dragDelta.y, 0), maxY)
+      y: min(max(currentOrigin.y + dragDelta.y, 0), maxY)
     )
   }
 
   final class Coordinator {
     weak var documentView: ImageZoomDocumentView?
+    var onScrollZoom: ((CGFloat) -> Bool)?
+
+    @MainActor
+    func handleScrollZoom(_ deltaY: CGFloat) -> Bool {
+      onScrollZoom?(deltaY) ?? false
+    }
   }
 }
 
@@ -283,6 +337,21 @@ final class ImageZoomDocumentView: NSView {
 
 final class PannableScrollView: NSScrollView {
   private var lastDragLocation: NSPoint?
+  var onScrollZoom: ((CGFloat) -> Bool)?
+
+  override func scrollWheel(with event: NSEvent) {
+    guard ImageZoomScrollWheel.shouldZoom(
+      scrollingDeltaY: event.scrollingDeltaY,
+      hasPreciseScrollingDeltas: event.hasPreciseScrollingDeltas
+    ), let onScrollZoom else {
+      super.scrollWheel(with: event)
+      return
+    }
+
+    if !onScrollZoom(event.scrollingDeltaY) {
+      super.scrollWheel(with: event)
+    }
+  }
 
   override func mouseDown(with event: NSEvent) {
     lastDragLocation = convert(event.locationInWindow, from: nil)

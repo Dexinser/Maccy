@@ -61,7 +61,7 @@ final class ImagePreviewInfoTests: XCTestCase {
   }
 
   @MainActor
-  func testImageDragScrollOriginMovesOppositeDragDirection() {
+  func testImageDragScrollOriginMovesVerticallyWithDragDirection() {
     let origin = ImageZoomScrollView.scrolledOrigin(
       currentOrigin: NSPoint(x: 300, y: 400),
       dragDelta: NSPoint(x: 40, y: -25),
@@ -70,20 +70,53 @@ final class ImagePreviewInfoTests: XCTestCase {
     )
 
     XCTAssertEqual(origin.x, 260)
-    XCTAssertEqual(origin.y, 425)
+    XCTAssertEqual(origin.y, 375)
   }
 
   @MainActor
   func testImageDragScrollOriginIsClampedToScrollableBounds() {
     let origin = ImageZoomScrollView.scrolledOrigin(
       currentOrigin: NSPoint(x: 10, y: 20),
-      dragDelta: NSPoint(x: 200, y: 300),
+      dragDelta: NSPoint(x: 200, y: -300),
       contentSize: NSSize(width: 1200, height: 1000),
       viewportSize: NSSize(width: 500, height: 400)
     )
 
     XCTAssertEqual(origin.x, 0)
     XCTAssertEqual(origin.y, 0)
+  }
+
+  @MainActor
+  func testImageDragScrollOriginIsClampedToScrollableMaximum() {
+    let origin = ImageZoomScrollView.scrolledOrigin(
+      currentOrigin: NSPoint(x: 690, y: 580),
+      dragDelta: NSPoint(x: -200, y: 300),
+      contentSize: NSSize(width: 1200, height: 1000),
+      viewportSize: NSSize(width: 500, height: 400)
+    )
+
+    XCTAssertEqual(origin.x, 700)
+    XCTAssertEqual(origin.y, 600)
+  }
+
+  @MainActor
+  func testMouseWheelAdjustsZoomScaleInSteps() {
+    XCTAssertEqual(ImageZoomScale.scale(afterScrollDeltaY: 1, currentScale: 1), 1.25)
+    XCTAssertEqual(ImageZoomScale.scale(afterScrollDeltaY: -1, currentScale: 1), 0.75)
+    XCTAssertEqual(ImageZoomScale.scale(afterScrollDeltaY: 0, currentScale: 1), 1)
+  }
+
+  @MainActor
+  func testMouseWheelZoomScaleIsClamped() {
+    XCTAssertEqual(ImageZoomScale.scale(afterScrollDeltaY: -1, currentScale: 0.25), 0.25)
+    XCTAssertEqual(ImageZoomScale.scale(afterScrollDeltaY: 1, currentScale: 6), 6)
+  }
+
+  @MainActor
+  func testOnlyPhysicalMouseWheelEventsTriggerZoom() {
+    XCTAssertTrue(ImageZoomScrollWheel.shouldZoom(scrollingDeltaY: 1, hasPreciseScrollingDeltas: false))
+    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(scrollingDeltaY: 1, hasPreciseScrollingDeltas: true))
+    XCTAssertFalse(ImageZoomScrollWheel.shouldZoom(scrollingDeltaY: 0, hasPreciseScrollingDeltas: false))
   }
 
   @MainActor
