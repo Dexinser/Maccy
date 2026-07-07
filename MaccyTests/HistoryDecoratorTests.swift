@@ -103,6 +103,21 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertNotNil(itemDecorator.listAccessoryImage)
   }
 
+  func testMixedImageRowsDoNotRenderTitleViewBeforeThumbnailGenerated() {
+    let itemDecorator = historyItemDecorator(
+      text: "Maccy Q W screenshot text",
+      image: NSImage(named: "StatusBarMenuImage")!
+    )
+    itemDecorator.title = "Maccy Q W screenshot text"
+    itemDecorator.item.title = itemDecorator.title
+
+    XCTAssertTrue(itemDecorator.containsImage)
+    XCTAssertNil(itemDecorator.thumbnailImage)
+    XCTAssertFalse(itemDecorator.showsListTitle)
+    XCTAssertNil(itemDecorator.listAttributedTitle)
+    XCTAssertNotNil(itemDecorator.listAccessoryImage)
+  }
+
   func testMixedImageSearchHighlightDoesNotExposeClipboardText() {
     let itemDecorator = historyItemDecorator(
       text: "Maccy Q W screenshot text",
@@ -128,6 +143,7 @@ class HistoryItemDecoratorTests: XCTestCase {
     let presentation = PasteStackItemPresentation(item: itemDecorator, index: 0)
 
     XCTAssertEqual(presentation.title, "")
+    XCTAssertFalse(presentation.showsTitle)
     XCTAssertNotNil(presentation.accessoryImage)
   }
 

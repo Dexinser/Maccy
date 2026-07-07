@@ -52,12 +52,18 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
   var applicationImage: ApplicationImage
 
   var text: String { item.previewableText }
+  var showsListTitle: Bool {
+    !containsImage
+  }
   var listTitle: String {
-    if containsImage {
+    if !showsListTitle {
       return ""
     }
 
     return title
+  }
+  var listAttributedTitle: AttributedString? {
+    showsListTitle ? attributedTitle : nil
   }
 
   var listAccessoryImage: NSImage? {

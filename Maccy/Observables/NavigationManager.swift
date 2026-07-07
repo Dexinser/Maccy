@@ -158,6 +158,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
       selectInFooter(footerItem)
     } else {
       leadHistoryItem = nil
+      clearHistorySelectionMarkers()
       selection = .init()
       footer.selectedItem = nil
     }
@@ -166,7 +167,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
   private func selectInHistory(_ item: HistoryItemDecorator) {
     leadHistoryItem = item
     isManualMultiSelect = false
-    history.all.forEach { $0.selectionIndex = -1 }
+    clearHistorySelectionMarkers()
     selection = .init(items: [item])
     footer.selectedItem = nil
   }
@@ -174,9 +175,14 @@ class NavigationManager { // swiftlint:disable:this type_body_length
   private func selectInFooter(_ item: FooterItem) {
     leadHistoryItem = nil
     if !isMultiSelectInProgress {
+      clearHistorySelectionMarkers()
       selection = .init()
     }
     footer.selectedItem = item
+  }
+
+  private func clearHistorySelectionMarkers() {
+    history.all.forEach { $0.selectionIndex = -1 }
   }
 
   private func selectFromKeyboardNavigation(

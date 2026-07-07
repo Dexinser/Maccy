@@ -20,12 +20,14 @@ struct PasteStackItemPresentation {
   let thumbnailImage: NSImage?
   let accessoryImage: NSImage?
   let attributedTitle: AttributedString?
+  let showsTitle: Bool
 
   init(item: HistoryItemDecorator, index: Int?) {
     title = item.listTitle
     thumbnailImage = index != nil ? item.thumbnailImage : nil
     accessoryImage = thumbnailImage == nil ? item.listAccessoryImage : nil
-    attributedTitle = item.attributedTitle
+    attributedTitle = item.listAttributedTitle
+    showsTitle = item.showsListTitle
   }
 }
 
@@ -48,6 +50,7 @@ struct PasteStackItemView: View {
       shortcuts: [],
       isSelected: isSelected,
       selectionIndex: index,
+      showsTitle: presentation.showsTitle,
       selectionAppearance: .none
     ) {
       Text(verbatim: presentation.title)

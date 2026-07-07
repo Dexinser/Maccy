@@ -40,6 +40,7 @@ struct ListItemView<Title: View, ID: Hashable>: View {
   var isFavorite: Bool = false
   var selectionIndex: Int?
   var help: LocalizedStringKey?
+  var showsTitle: Bool = true
   var selectionAppearance: SelectionAppearance = .none
   var onSelect: (() -> Void)?
   var onFavoriteToggle: (() -> Void)?
@@ -101,7 +102,7 @@ struct ListItemView<Title: View, ID: Hashable>: View {
           .accessibilityIdentifier("copy-history-item")
           .padding(.trailing, 5)
           .padding(.vertical, 5)
-      } else {
+      } else if showsTitle {
         ListItemTitleView(attributedTitle: attributedTitle, title: title)
           .padding(.trailing, 5)
       }

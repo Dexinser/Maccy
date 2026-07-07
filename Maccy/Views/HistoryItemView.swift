@@ -38,11 +38,12 @@ struct HistoryItemView: View {
       appIcon: item.applicationImage,
       image: item.thumbnailImage,
       accessoryImage: item.listAccessoryImage,
-      attributedTitle: item.attributedTitle,
+      attributedTitle: item.listAttributedTitle,
       shortcuts: item.shortcuts,
       isSelected: item.isSelected,
       isFavorite: item.isFavorite,
       selectionIndex: visualIndex,
+      showsTitle: item.showsListTitle,
       selectionAppearance: selectionAppearance,
       onSelect: {
         if NSEvent.modifierFlags.contains(.command) && appState.multiSelectionEnabled {
