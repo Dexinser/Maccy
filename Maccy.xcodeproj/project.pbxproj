@@ -43,6 +43,8 @@
 		F12A00092F00001000000001 /* AsyncViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A00092F00001000000002 /* AsyncViewModelTests.swift */; };
 		F12A000A2F00001000000001 /* FooterVisibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A000A2F00001000000002 /* FooterVisibilityTests.swift */; };
 		F12A000B2F00001000000001 /* ImageZoomWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A000B2F00001000000002 /* ImageZoomWindowController.swift */; };
+		F12A000C2F00001000000001 /* IncrementalRenderWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A000C2F00001000000002 /* IncrementalRenderWindow.swift */; };
+		F12A000D2F00001000000001 /* IncrementalRenderWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A000D2F00001000000002 /* IncrementalRenderWindowTests.swift */; };
 		2FA81FE02E43D9B700C12F92 /* Dictionary+RemoveItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA81FDF2E43D9A600C12F92 /* Dictionary+RemoveItem.swift */; };
 		2FB5BCA02CD8F73F008B33F4 /* ApplicationImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB5BC9F2CD8F73C008B33F4 /* ApplicationImage.swift */; };
 		2FF2E94E2E774B5B0093D72C /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF2E94D2E774B570093D72C /* NavigationManager.swift */; };
@@ -315,6 +317,8 @@
 		F12A00032F00001000000002 /* FilePreviewInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewInfoTests.swift; sourceTree = "<group>"; };
 		F12A00062F00001000000004 /* ImagePreviewInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewInfoTests.swift; sourceTree = "<group>"; };
 		F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewTextSelectionTests.swift; sourceTree = "<group>"; };
+		F12A000C2F00001000000002 /* IncrementalRenderWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncrementalRenderWindow.swift; sourceTree = "<group>"; };
+		F12A000D2F00001000000002 /* IncrementalRenderWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncrementalRenderWindowTests.swift; sourceTree = "<group>"; };
 		DA3873FA2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/AdvancedSettings.strings; sourceTree = "<group>"; };
 		DA3873FB2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/AppearanceSettings.strings; sourceTree = "<group>"; };
 		DA3873FC2D09EB7600E7B251 /* be */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = be; path = be.lproj/GeneralSettings.strings; sourceTree = "<group>"; };
@@ -767,6 +771,7 @@
 				DA1EDE422045B35300479723 /* HistoryDecoratorTests.swift */,
 				DAFE2DE8268A9B1B00990986 /* HistoryItemTests.swift */,
 				F12A00062F00001000000004 /* ImagePreviewInfoTests.swift */,
+				F12A000D2F00001000000002 /* IncrementalRenderWindowTests.swift */,
 				F12A00012F00001000000006 /* PreviewTextSelectionTests.swift */,
 				DA384E85232746D800603999 /* SearchTests.swift */,
 				DA696BD12401EEE900DE80CF /* SorterTests.swift */,
@@ -875,6 +880,7 @@
 				DA1969202C3F6C6800258481 /* HistoryItemAction.swift */,
 				F12A00062F00001000000002 /* ImagePreviewInfo.swift */,
 				F12A000B2F00001000000002 /* ImageZoomWindowController.swift */,
+				F12A000C2F00001000000002 /* IncrementalRenderWindow.swift */,
 				2F578C3C2EFFE8400088B759 /* ItemsProtocol.swift */,
 				F12A00022F00001000000002 /* PreviewTextSelection.swift */,
 				DABDE97E2974706C005B32E9 /* KeyboardLayout.swift */,
@@ -1116,6 +1122,7 @@
 				F11A11111111111111111111 /* ClipboardFilterTests.swift in Sources */,
 				F12A00032F00001000000001 /* FilePreviewInfoTests.swift in Sources */,
 				F12A00062F00001000000003 /* ImagePreviewInfoTests.swift in Sources */,
+				F12A000D2F00001000000001 /* IncrementalRenderWindowTests.swift in Sources */,
 				F12A00012F00001000000005 /* PreviewTextSelectionTests.swift in Sources */,
 				DA3CE8001E44A62500B3AA98 /* ClipboardTests.swift in Sources */,
 				F12A000A2F00001000000001 /* FooterVisibilityTests.swift in Sources */,
@@ -1153,6 +1160,7 @@
 				2F0EC7912F000001003E2EA9 /* ClipboardFilterPickerView.swift in Sources */,
 				F12A00052F00001000000003 /* ImagePreviewDetailView.swift in Sources */,
 				F12A000B2F00001000000001 /* ImageZoomWindowController.swift in Sources */,
+				F12A000C2F00001000000001 /* IncrementalRenderWindow.swift in Sources */,
 				DA5078992CF2676B00215488 /* MouseMovedViewModifer.swift in Sources */,
 				DA19690E2C3EEFA900258481 /* KeyboardShortcutView.swift in Sources */,
 				DA243D122C2F64830012A27F /* ContentView.swift in Sources */,

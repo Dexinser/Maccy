@@ -52,7 +52,9 @@ struct ContentView: View {
               }
             }
             .onMouseMove {
-              appState.navigator.isKeyboardNavigating = false
+              if appState.navigator.isKeyboardNavigating {
+                appState.navigator.isKeyboardNavigating = false
+              }
             }
           } slideout: {
             SlideoutContentView()

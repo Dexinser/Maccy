@@ -59,6 +59,13 @@ class HistoryItem {
     NSPasteboard.PasteboardType.notesRichText.rawValue
   ]
 
+  private static let imageTypes: Set<NSPasteboard.PasteboardType> = [
+    .tiff,
+    .png,
+    .jpeg,
+    .heic
+  ]
+
   var application: String?
   var firstCopiedAt: Date = Date.now
   var lastCopiedAt: Date = Date.now
@@ -154,7 +161,7 @@ class HistoryItem {
 
   var imageData: Data? {
     var data: Data?
-    data = contentData([.tiff, .png, .jpeg, .heic])
+    data = contentData(Array(Self.imageTypes))
     if data == nil, universalClipboardImage, let url = fileURLs.first {
       data = try? Data(contentsOf: url)
     }
@@ -203,7 +210,7 @@ class HistoryItem {
   }
 
   var containsImage: Bool {
-    image != nil
+    hasContent(Array(Self.imageTypes)) || universalClipboardImage
   }
 
   var containsFiles: Bool {
@@ -240,6 +247,12 @@ class HistoryItem {
     })
 
     return content?.value
+  }
+
+  private func hasContent(_ types: [NSPasteboard.PasteboardType]) -> Bool {
+    contents.contains { content in
+      types.contains(NSPasteboard.PasteboardType(content.type))
+    }
   }
 
   private func allContentData(_ types: [NSPasteboard.PasteboardType]) -> [Data] {

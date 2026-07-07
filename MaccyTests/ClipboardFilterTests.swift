@@ -40,6 +40,18 @@ class ClipboardFilterTests: XCTestCase {
     XCTAssertEqual(HistoryItemDecorator(historyItem(image: image)).kind, .image)
   }
 
+  func testImageTypeDetectionDoesNotRequireDecodingImageData() {
+    let item = imageTypedHistoryItem(data: Data("not an image".utf8))
+    let decorator = HistoryItemDecorator(item)
+
+    XCTAssertNil(item.image)
+    XCTAssertTrue(item.containsImage)
+    XCTAssertTrue(decorator.hasImage)
+    XCTAssertEqual(item.kind, .image)
+    XCTAssertEqual(decorator.kind, .image)
+    XCTAssertTrue(ClipboardFilter.images.matches(decorator))
+  }
+
   func testFileItemKind() {
     let url = URL(fileURLWithPath: "/tmp/example.txt")
     XCTAssertEqual(historyItem(fileURL: url).kind, .file)
@@ -238,6 +250,18 @@ class ClipboardFilterTests: XCTestCase {
       )
     ]
     item.title = item.generateTitle()
+    return item
+  }
+
+  private func imageTypedHistoryItem(data: Data) -> HistoryItem {
+    let item = HistoryItem()
+    Storage.shared.context.insert(item)
+    item.contents = [
+      HistoryItemContent(
+        type: NSPasteboard.PasteboardType.png.rawValue,
+        value: data
+      )
+    ]
     return item
   }
 

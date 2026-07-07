@@ -5,6 +5,8 @@ struct HistoryListView: View {
   @Binding var searchQuery: String
   @FocusState.Binding var searchFocused: Bool
 
+  @State private var renderedUnpinnedCount = IncrementalRenderWindow.initialLimit
+
   @Environment(AppState.self) private var appState
   @Environment(ModifierFlags.self) private var modifierFlags
   @Environment(\.scenePhase) private var scenePhase
@@ -13,18 +15,25 @@ struct HistoryListView: View {
   @Default(.previewDelay) private var previewDelay
   @Default(.showFooter) private var showFooter
 
-  private var pinnedItems: [HistoryItemDecorator] {
+  private var visiblePinnedItems: [HistoryItemDecorator] {
     appState.history.pinnedItems.filter(\.isVisible)
   }
-  private var unpinnedItems: [HistoryItemDecorator] {
+  private var visibleUnpinnedItems: [HistoryItemDecorator] {
     appState.history.unpinnedItems.filter(\.isVisible)
   }
+  private var renderedUnpinnedItems: [HistoryItemDecorator] {
+    Array(visibleUnpinnedItems.prefix(renderedUnpinnedCount))
+  }
   private var showPinsSeparator: Bool {
-    pinsVisible && !unpinnedItems.isEmpty
+    pinsVisible && !visibleUnpinnedItems.isEmpty
   }
 
   private var pinsVisible: Bool {
-    return !pinnedItems.isEmpty
+    return !visiblePinnedItems.isEmpty
+  }
+
+  private var moreUnpinnedItemsVisible: Bool {
+    renderedUnpinnedCount < visibleUnpinnedItems.count
   }
 
   private var pasteStackVisible: Bool {
@@ -65,7 +74,32 @@ struct HistoryListView: View {
       .padding(.vertical, Popup.verticalSeparatorPadding)
   }
 
+  private func resetRenderedUnpinnedItems(total: Int) {
+    renderedUnpinnedCount = IncrementalRenderWindow.resetCount(total: total)
+  }
+
+  private func renderMoreUnpinnedItems(total: Int) {
+    renderedUnpinnedCount = IncrementalRenderWindow.expandedCount(
+      total: total,
+      current: renderedUnpinnedCount
+    )
+  }
+
+  private func renderLeadSelectionIfNeeded(in items: [HistoryItemDecorator]) {
+    guard let leadSelection = appState.navigator.leadSelection,
+          let index = items.firstIndex(where: { $0.id == leadSelection })
+    else { return }
+
+    renderedUnpinnedCount = IncrementalRenderWindow.countIncluding(
+      index: index,
+      current: renderedUnpinnedCount,
+      total: items.count
+    )
+  }
+
   var body: some View {
+    let unpinnedItems = visibleUnpinnedItems
+    let renderedItems = renderedUnpinnedItems
     let topPinsVisible = pinTo == .top && pinsVisible
     let bottomPinsVisible = pinTo == .bottom && pinsVisible
     let topSeparatorVisible = topPinsVisible || pasteStackVisible
@@ -84,7 +118,7 @@ struct HistoryListView: View {
       }
 
       if topPinsVisible {
-        PinsView(items: pinnedItems)
+        PinsView(items: visiblePinnedItems)
       }
 
       if topSeparatorVisible {
@@ -96,12 +130,25 @@ struct HistoryListView: View {
 
     ScrollView {
       ScrollViewReader { proxy in
-        MultipleSelectionListView(items: unpinnedItems) { previous, item, next, index in
-          HistoryItemView(item: item, previous: previous, next: next, index: index)
+        VStack(spacing: 0) {
+          MultipleSelectionListView(items: renderedItems) { previous, item, next, index in
+            HistoryItemView(item: item, previous: previous, next: next, index: index)
+          }
+
+          if moreUnpinnedItemsVisible {
+            ProgressView()
+              .controlSize(.small)
+              .frame(maxWidth: .infinity)
+              .padding(.vertical, 8)
+              .onAppear {
+                renderMoreUnpinnedItems(total: unpinnedItems.count)
+              }
+          }
         }
         .padding(.top, scrollTopPadding)
         .padding(.bottom, scrollBottomPadding)
         .task(id: appState.navigator.scrollTarget) {
+          renderLeadSelectionIfNeeded(in: unpinnedItems)
           guard appState.navigator.scrollTarget != nil else { return }
 
           try? await Task.sleep(for: .milliseconds(10))
@@ -111,6 +158,16 @@ struct HistoryListView: View {
             proxy.scrollTo(selection)
             appState.navigator.scrollTarget = nil
           }
+        }
+        .onAppear {
+          resetRenderedUnpinnedItems(total: unpinnedItems.count)
+        }
+        .onChange(of: appState.history.items.map(\.id)) {
+          resetRenderedUnpinnedItems(total: unpinnedItems.count)
+          renderLeadSelectionIfNeeded(in: unpinnedItems)
+        }
+        .onChange(of: appState.navigator.leadSelection) {
+          renderLeadSelectionIfNeeded(in: unpinnedItems)
         }
         .onChange(of: scenePhase) {
           if scenePhase == .active {
@@ -152,7 +209,7 @@ struct HistoryListView: View {
       }
 
       if bottomPinsVisible {
-        PinsView(items: pinnedItems)
+        PinsView(items: visiblePinnedItems)
       }
     }
     .padding(.bottom, bottomSeparatorVisible ? bottomPadding : 0)

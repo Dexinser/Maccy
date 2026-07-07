@@ -65,6 +65,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
   @ObservationIgnored
   var all: [HistoryItemDecorator] = []
 
+  @ObservationIgnored
+  private var visibleItemsByID: [UUID: HistoryItemDecorator] = [:]
+
   init() {
     Task {
       for await _ in Defaults.updates(.pasteByDefault, initial: false) {
@@ -491,8 +494,13 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
 
       return item
     }
+    visibleItemsByID = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
 
     updateUnpinnedShortcuts()
+  }
+
+  func item(id: UUID) -> HistoryItemDecorator? {
+    visibleItemsByID[id]
   }
 
   private func recomputeVisibleItems(

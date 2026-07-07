@@ -67,7 +67,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
   }
 
   func select(id: UUID) {
-    if let item = history.items.first(where: { $0.id == id }) {
+    if let item = history.item(id: id) {
       select(item: item, footerItem: nil)
     } else if let item = footer.firstVisibleItem(where: { $0.id == id }) {
       select(item: nil, footerItem: item)
@@ -137,7 +137,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
     if let stack = history.pasteStack,
        stack.id == id {
       selectWithoutScrolling(item: nil, footerItem: nil)
-    } else if let item = history.items.first(where: { $0.id == id }) {
+    } else if let item = history.item(id: id) {
       if !isMultiSelectInProgress {
         selectWithoutScrolling(item: item, footerItem: nil)
       }
