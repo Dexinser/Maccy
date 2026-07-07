@@ -227,6 +227,21 @@ class ClipboardFilterTests: XCTestCase {
     XCTAssertEqual(AppState.shared.navigator.selection.first, pinned)
   }
 
+  func testSelectingSingleItemClearsStaleSelectionMarkers() {
+    let foo = history.add(historyItem(text: "foo"))
+    let bar = history.add(historyItem(text: "bar"))
+    AppState.shared.navigator.selectWithoutScrolling(item: nil)
+    foo.selectionIndex = 0
+    bar.selectionIndex = 1
+
+    AppState.shared.navigator.selectWithoutScrolling(item: bar)
+
+    XCTAssertFalse(foo.isSelected)
+    XCTAssertTrue(bar.isSelected)
+    XCTAssertEqual(bar.selectionIndex, 0)
+    XCTAssertEqual(AppState.shared.navigator.selection.items, [bar])
+  }
+
   private func historyItem(text: String) -> HistoryItem {
     let item = HistoryItem()
     Storage.shared.context.insert(item)

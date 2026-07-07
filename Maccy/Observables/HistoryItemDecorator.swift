@@ -52,6 +52,25 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
   var applicationImage: ApplicationImage
 
   var text: String { item.previewableText }
+  var listTitle: String {
+    if containsImage && !containsText && !containsFiles {
+      return ""
+    }
+
+    return title
+  }
+
+  var listAccessoryImage: NSImage? {
+    if thumbnailImage != nil {
+      return nil
+    }
+
+    if containsImage && !containsText && !containsFiles {
+      return NSImage(systemSymbolName: "photo", accessibilityDescription: nil)
+    }
+
+    return ColorImage.from(title)
+  }
 
   var isPinned: Bool { item.pin != nil }
   var isUnpinned: Bool { item.pin == nil }

@@ -74,8 +74,19 @@ class HistoryItemDecoratorTests: XCTestCase {
     let itemDecorator = historyItemDecorator(image)
     itemDecorator.sizeImages()
     XCTAssertEqual(itemDecorator.title, "")
+    XCTAssertEqual(itemDecorator.listTitle, "")
     XCTAssertEqual(itemDecorator.previewImage!.size, image.size)
     XCTAssertEqual(itemDecorator.thumbnailImage!.size, image.size)
+  }
+
+  func testPureImageListTitleDoesNotExposeRecognizedImageText() {
+    let itemDecorator = historyItemDecorator(NSImage(named: "StatusBarMenuImage")!)
+    itemDecorator.item.title = "Recognized screenshot text"
+    itemDecorator.title = itemDecorator.item.title
+
+    XCTAssertEqual(itemDecorator.title, "Recognized screenshot text")
+    XCTAssertEqual(itemDecorator.listTitle, "")
+    XCTAssertNotNil(itemDecorator.listAccessoryImage)
   }
 
   // We also need to add test for image with width bigger than max width.

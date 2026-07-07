@@ -37,7 +37,7 @@ struct HistoryItemView: View {
       selectionId: item.id,
       appIcon: item.applicationImage,
       image: item.thumbnailImage,
-      accessoryImage: item.thumbnailImage != nil ? nil : ColorImage.from(item.title),
+      accessoryImage: item.listAccessoryImage,
       attributedTitle: item.attributedTitle,
       shortcuts: item.shortcuts,
       isSelected: item.isSelected,
@@ -57,7 +57,7 @@ struct HistoryItemView: View {
         appState.history.toggleFavorite(item)
       }
     ) {
-      Text(verbatim: item.title)
+      Text(verbatim: item.listTitle)
     }
     .onAppear {
       item.ensureThumbnailImage()

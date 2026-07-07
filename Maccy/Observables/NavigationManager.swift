@@ -165,6 +165,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
 
   private func selectInHistory(_ item: HistoryItemDecorator) {
     leadHistoryItem = item
+    history.all.forEach { $0.selectionIndex = -1 }
     selection = .init(items: [item])
     footer.selectedItem = nil
   }
