@@ -119,9 +119,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
 
   @MainActor
   private func limitHistorySize(to maxSize: Int) {
-    let unpinned = all.filter(\.isUnpinned)
-    if unpinned.count >= maxSize {
-      unpinned[maxSize...].forEach(delete)
+    let disposableItems = all.filter(\.isDisposable)
+    if disposableItems.count >= maxSize {
+      disposableItems[maxSize...].forEach(delete)
     }
   }
 
@@ -151,6 +151,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       item.firstCopiedAt = existingHistoryItem.firstCopiedAt
       item.numberOfCopies += existingHistoryItem.numberOfCopies
       item.pin = existingHistoryItem.pin
+      item.isFavorite = existingHistoryItem.isFavorite
       item.title = existingHistoryItem.title
       if !item.fromMaccy {
         item.application = existingHistoryItem.application
@@ -167,9 +168,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       }
     }
 
-    // Remove exceeding items. Do this after the item is added to avoid removing something
-    // if a duplicate was found as then the size already stayed the same.
-    limitHistorySize(to: Defaults[.size] - 1)
+    // Remove exceeding disposable items. Favorites and pins do not consume regular history capacity.
+    let disposableCapacity = item.pin == nil && !item.isFavorite ? Defaults[.size] - 1 : Defaults[.size]
+    limitHistorySize(to: disposableCapacity)
 
     sessionLog[Clipboard.shared.changeCount] = item
 
@@ -211,22 +212,22 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
   func clear() {
     withLogging("Clearing history") {
       all.forEach { item in
-        if item.isUnpinned {
+        if item.isDisposable {
           cleanup(item)
         }
       }
-      all.removeAll(where: \.isUnpinned)
-      sessionLog.removeValues { $0.pin == nil }
+      all.removeAll(where: \.isDisposable)
+      sessionLog.removeValues { $0.pin == nil && !$0.isFavorite }
       recomputeVisibleItems(updateSelection: false, needsResize: false)
 
       try? Storage.shared.context.transaction {
         try? Storage.shared.context.delete(
           model: HistoryItem.self,
-          where: #Predicate { $0.pin == nil }
+          where: #Predicate { $0.pin == nil && !$0.isFavorite }
         )
         try? Storage.shared.context.delete(
           model: HistoryItemContent.self,
-          where: #Predicate { $0.item?.pin == nil }
+          where: #Predicate { $0.item?.pin == nil && $0.item?.isFavorite == false }
         )
       }
       Storage.shared.context.processPendingChanges()
@@ -434,6 +435,26 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     searchQuery = ""
     recomputeVisibleItems(updateSelection: false, needsResize: false)
     if item.isUnpinned {
+      AppState.shared.navigator.scrollTarget = item.id
+    }
+  }
+
+  @MainActor
+  func toggleFavorite(_ item: HistoryItemDecorator?) {
+    guard let item else { return }
+
+    item.toggleFavorite()
+    let isNowFavorite = item.isFavorite
+    if !isNowFavorite {
+      limitHistorySize(to: Defaults[.size])
+    }
+
+    Storage.shared.context.processPendingChanges()
+    try? Storage.shared.context.save()
+
+    searchQuery = ""
+    recomputeVisibleItems(updateSelection: activeFilter == .favorites, needsResize: false)
+    if isNowFavorite {
       AppState.shared.navigator.scrollTarget = item.id
     }
   }

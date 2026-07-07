@@ -55,12 +55,15 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
 
   var isPinned: Bool { item.pin != nil }
   var isUnpinned: Bool { item.pin == nil }
+  var isFavorite: Bool { item.isFavorite }
+  var isDisposable: Bool { item.pin == nil && !item.isFavorite }
 
   func hash(into hasher: inout Hasher) {
     // We need to hash title and attributedTitle, so SwiftUI knows it needs to update the view if they chage
     hasher.combine(id)
     hasher.combine(title)
     hasher.combine(attributedTitle)
+    hasher.combine(isFavorite)
   }
 
   private(set) var item: HistoryItem
@@ -184,6 +187,11 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
       let pin = HistoryItem.randomAvailablePin
       item.pin = pin
     }
+  }
+
+  @MainActor
+  func toggleFavorite() {
+    item.isFavorite.toggle()
   }
 
   private func synchronizeItemPin() {

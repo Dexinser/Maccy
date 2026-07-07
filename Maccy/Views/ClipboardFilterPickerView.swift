@@ -13,7 +13,7 @@ struct ClipboardFilterPickerView: View {
     .pickerStyle(.segmented)
     .labelsHidden()
     .controlSize(.small)
-    .frame(width: 260)
+    .frame(width: 340)
   }
 }
 

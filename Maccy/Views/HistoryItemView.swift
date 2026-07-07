@@ -41,22 +41,26 @@ struct HistoryItemView: View {
       attributedTitle: item.attributedTitle,
       shortcuts: item.shortcuts,
       isSelected: item.isSelected,
+      isFavorite: item.isFavorite,
       selectionIndex: visualIndex,
-      selectionAppearance: selectionAppearance
+      selectionAppearance: selectionAppearance,
+      onSelect: {
+        if NSEvent.modifierFlags.contains(.command) && appState.multiSelectionEnabled {
+          appState.navigator.addToSelection(item: item)
+        } else {
+          Task {
+            appState.history.select(item)
+          }
+        }
+      },
+      onFavoriteToggle: {
+        appState.history.toggleFavorite(item)
+      }
     ) {
       Text(verbatim: item.title)
     }
     .onAppear {
       item.ensureThumbnailImage()
-    }
-    .onTapGesture {
-      if NSEvent.modifierFlags.contains(.command) && appState.multiSelectionEnabled {
-        appState.navigator.addToSelection(item: item)
-      } else {
-        Task {
-          appState.history.select(item)
-        }
-      }
     }
   }
 }

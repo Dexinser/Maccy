@@ -142,6 +142,23 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertFalse(itemDecorator.isPinned)
   }
 
+  func testUnfavoritedByDefault() {
+    let itemDecorator = historyItemDecorator("foo")
+    XCTAssertFalse(itemDecorator.item.isFavorite)
+    XCTAssertFalse(itemDecorator.isFavorite)
+  }
+
+  func testToggleFavorite() {
+    let itemDecorator = historyItemDecorator("foo")
+    itemDecorator.toggleFavorite()
+    XCTAssertTrue(itemDecorator.item.isFavorite)
+    XCTAssertTrue(itemDecorator.isFavorite)
+
+    itemDecorator.toggleFavorite()
+    XCTAssertFalse(itemDecorator.item.isFavorite)
+    XCTAssertFalse(itemDecorator.isFavorite)
+  }
+
   func testHighlight() {
     let itemDecorator = historyItemDecorator("foo bar baz")
     itemDecorator.highlight("random", [

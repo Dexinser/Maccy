@@ -37,9 +37,12 @@ struct ListItemView<Title: View, ID: Hashable>: View {
   var attributedTitle: AttributedString?
   var shortcuts: [KeyShortcut]
   var isSelected: Bool
+  var isFavorite: Bool = false
   var selectionIndex: Int?
   var help: LocalizedStringKey?
   var selectionAppearance: SelectionAppearance = .none
+  var onSelect: (() -> Void)?
+  var onFavoriteToggle: (() -> Void)?
   @ViewBuilder var title: () -> Title
 
   @Default(.showApplicationIcons) private var showIcons
@@ -47,6 +50,31 @@ struct ListItemView<Title: View, ID: Hashable>: View {
   @Environment(ModifierFlags.self) private var modifierFlags
 
   var body: some View {
+    HStack(spacing: 0) {
+      if let onSelect {
+        leadingContent
+          .contentShape(Rectangle())
+          .onTapGesture(perform: onSelect)
+      } else {
+        leadingContent
+      }
+
+      trailingControls
+        .padding(.trailing, 10)
+    }
+    .frame(minHeight: Popup.itemHeight)
+    .id(id)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .foregroundStyle(isSelected ? Color.white : .primary)
+    // macOS 26 broke hovering if no background is present.
+    // The slight opcaity white background is a workaround
+    .background(isSelected ? Color.accentColor.opacity(0.8) : .white.opacity(0.001))
+    .clipShape(selectionAppearance.rect(cornerRadius: Popup.cornerRadius))
+    .hoverSelectionId(selectionId)
+    .help(help ?? "")
+  }
+
+  private var leadingContent: some View {
     HStack(spacing: 0) {
       if showIcons, let appIcon {
         VStack {
@@ -79,42 +107,45 @@ struct ListItemView<Title: View, ID: Hashable>: View {
       }
 
       Spacer()
+    }
+  }
 
-      HStack(spacing: 5) {
-        if let index = selectionIndex {
-          Text("\(index + 1)")
-            .font(.caption)
-            .frame(minWidth: 10, alignment: .center)
-            .padding(3)
-            .background(
-              Color.secondary.opacity(isSelected ? 0.5 : 0.8),
-              in: Capsule()
-            )
-            .foregroundStyle(Color.white)
+  private var trailingControls: some View {
+    HStack(spacing: 5) {
+      if let onFavoriteToggle {
+        Button(action: onFavoriteToggle) {
+          Image(systemName: isFavorite ? "star.fill" : "star")
+            .font(.system(size: 12, weight: isFavorite ? .semibold : .regular))
+            .foregroundStyle(isFavorite ? Color.yellow : (isSelected ? Color.white.opacity(0.85) : Color.secondary))
+            .frame(width: 18, height: 18)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .help(isFavorite ? "Remove from Favorites" : "Add to Favorites")
+      }
 
-        if !shortcuts.isEmpty {
-          ZStack(alignment: .trailing) {
-            ForEach(shortcuts) { shortcut in
-              let visible = shortcut.isVisible(shortcuts, modifierFlags.flags)
-              KeyboardShortcutView(shortcut: shortcut)
-                .opacity(visible ? 1 : 0)
-                .frame(width: visible ? nil : 0)
-            }
+      if let index = selectionIndex {
+        Text("\(index + 1)")
+          .font(.caption)
+          .frame(minWidth: 10, alignment: .center)
+          .padding(3)
+          .background(
+            Color.secondary.opacity(isSelected ? 0.5 : 0.8),
+            in: Capsule()
+          )
+          .foregroundStyle(Color.white)
+      }
+
+      if !shortcuts.isEmpty {
+        ZStack(alignment: .trailing) {
+          ForEach(shortcuts) { shortcut in
+            let visible = shortcut.isVisible(shortcuts, modifierFlags.flags)
+            KeyboardShortcutView(shortcut: shortcut)
+              .opacity(visible ? 1 : 0)
+              .frame(width: visible ? nil : 0)
           }
         }
       }
-      .padding(.trailing, 10)
     }
-    .frame(minHeight: Popup.itemHeight)
-    .id(id)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .foregroundStyle(isSelected ? Color.white : .primary)
-    // macOS 26 broke hovering if no background is present.
-    // The slight opcaity white background is a workaround
-    .background(isSelected ? Color.accentColor.opacity(0.8) : .white.opacity(0.001))
-    .clipShape(selectionAppearance.rect(cornerRadius: Popup.cornerRadius))
-    .hoverSelectionId(selectionId)
-    .help(help ?? "")
   }
 }

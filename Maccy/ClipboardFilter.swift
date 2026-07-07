@@ -25,6 +25,7 @@ enum ClipboardItemKind: String, CaseIterable, Identifiable, CustomStringConverti
 
 enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertible, Defaults.Serializable {
   case all
+  case favorites
   case text
   case images
   case files
@@ -35,6 +36,8 @@ enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertibl
     switch self {
     case .all:
       return "All"
+    case .favorites:
+      return "Favorites"
     case .text:
       return "Text"
     case .images:
@@ -48,6 +51,8 @@ enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertibl
     switch self {
     case .all:
       return true
+    case .favorites:
+      return item.isFavorite
     case .text:
       return item.containsText
     case .images:
@@ -60,6 +65,7 @@ enum ClipboardFilter: String, CaseIterable, Identifiable, CustomStringConvertibl
 }
 
 protocol ClipboardItemMatching {
+  var isFavorite: Bool { get }
   var containsText: Bool { get }
   var containsImage: Bool { get }
   var containsFiles: Bool { get }

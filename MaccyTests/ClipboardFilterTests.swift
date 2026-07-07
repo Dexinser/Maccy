@@ -7,10 +7,14 @@ import XCTest
 class ClipboardFilterTests: XCTestCase {
   let history = History.shared
   let savedSearchMode = Defaults[.searchMode]
+  let savedSize = Defaults[.size]
+  let savedSortBy = Defaults[.sortBy]
 
   override func setUp() {
     super.setUp()
     history.clearAll()
+    Defaults[.size] = 10
+    Defaults[.sortBy] = .firstCopiedAt
     Defaults[.searchMode] = .exact
     history.activeFilter = .all
     history.searchQuery = ""
@@ -20,6 +24,8 @@ class ClipboardFilterTests: XCTestCase {
   override func tearDown() {
     super.tearDown()
     history.clearAll()
+    Defaults[.size] = savedSize
+    Defaults[.sortBy] = savedSortBy
     Defaults[.searchMode] = savedSearchMode
   }
 
@@ -66,6 +72,11 @@ class ClipboardFilterTests: XCTestCase {
     let universalImage = universalClipboardImageItem()
     XCTAssertTrue(ClipboardFilter.images.matches(universalImage))
     XCTAssertFalse(ClipboardFilter.text.matches(universalImage))
+
+    let favorite = HistoryItemDecorator(historyItem(text: "favorite"))
+    favorite.toggleFavorite()
+    XCTAssertTrue(ClipboardFilter.favorites.matches(favorite))
+    XCTAssertFalse(ClipboardFilter.favorites.matches(mixedDecorator))
   }
 
   func testHistoryAppliesSearchThenTypeFilterAndKeepsUntitledImagesVisible() {
@@ -87,6 +98,95 @@ class ClipboardFilterTests: XCTestCase {
     history.activeFilter = .images
     history.recomputeVisibleItemsForTesting()
     XCTAssertEqual(history.items, [])
+  }
+
+  func testHistoryAppliesFavoritesFilter() {
+    let favorite = history.add(historyItem(text: "favorite"))
+    favorite.toggleFavorite()
+    let regular = history.add(historyItem(text: "regular"))
+
+    history.activeFilter = .favorites
+    history.recomputeVisibleItemsForTesting()
+
+    XCTAssertEqual(history.items, [favorite])
+    XCTAssertFalse(history.items.contains(regular))
+  }
+
+  func testUnfavoritingVisibleFavoriteRemovesItFromFavoritesFilter() {
+    let favorite = history.add(historyItem(text: "favorite"))
+    favorite.toggleFavorite()
+    history.activeFilter = .favorites
+    history.recomputeVisibleItemsForTesting()
+
+    history.toggleFavorite(favorite)
+
+    XCTAssertEqual(history.items, [])
+  }
+
+  func testAddingDuplicatePreservesFavorite() {
+    let favorite = history.add(historyItem(text: "favorite"))
+    favorite.toggleFavorite()
+    history.add(historyItem(text: "regular"))
+
+    history.add(historyItem(text: "favorite"))
+
+    XCTAssertEqual(history.all.filter { $0.text == "favorite" }.count, 1)
+    XCTAssertTrue(history.all.first { $0.text == "favorite" }?.isFavorite == true)
+  }
+
+  func testAddingDuplicateFavoriteDoesNotEvictRegularHistoryAtMaxSize() {
+    let favorite = history.add(historyItem(text: "favorite"))
+    history.toggleFavorite(favorite)
+    let regularTexts = (1...10).map(String.init)
+    regularTexts.forEach { history.add(historyItem(text: $0)) }
+
+    let duplicateFavorite = history.add(historyItem(text: "favorite"))
+
+    XCTAssertTrue(duplicateFavorite.isFavorite)
+    XCTAssertEqual(history.all.filter(\.isDisposable).count, 10)
+    XCTAssertEqual(Set(history.all.map(\.text)), Set(["favorite"] + regularTexts))
+  }
+
+  func testClearingKeepsFavorites() {
+    let favorite = history.add(historyItem(text: "favorite"))
+    favorite.toggleFavorite()
+    history.add(historyItem(text: "regular"))
+
+    history.clear()
+
+    XCTAssertEqual(history.all, [favorite])
+    XCTAssertEqual(history.items, [favorite])
+  }
+
+  func testMaxSizeIgnoresFavorites() {
+    var items: [HistoryItemDecorator] = []
+
+    let favorite = history.add(historyItem(text: "0"))
+    items.append(favorite)
+    favorite.toggleFavorite()
+
+    for index in 1...11 {
+      items.append(history.add(historyItem(text: String(index))))
+    }
+
+    XCTAssertEqual(history.all.count, 11)
+    XCTAssertTrue(history.all.contains(items[10]))
+    XCTAssertTrue(history.all.contains(items[0]))
+    XCTAssertFalse(history.all.contains(items[1]))
+  }
+
+  func testUnfavoritingTrimsHistoryToMaxDisposableSize() {
+    let favorite = history.add(historyItem(text: "favorite"))
+    history.toggleFavorite(favorite)
+
+    for index in 1...10 {
+      history.add(historyItem(text: String(index)))
+    }
+
+    history.toggleFavorite(favorite)
+
+    XCTAssertEqual(history.all.filter(\.isDisposable).count, 10)
+    XCTAssertFalse(history.all.contains(favorite))
   }
 
   func testRecomputeSelectsPinnedItemWhenOnlyPinnedItemsAreVisible() {
