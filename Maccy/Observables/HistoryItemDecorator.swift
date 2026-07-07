@@ -53,7 +53,7 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
 
   var text: String { item.previewableText }
   var listTitle: String {
-    if containsImage && !containsText && !containsFiles {
+    if containsImage {
       return ""
     }
 
@@ -65,7 +65,7 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
       return nil
     }
 
-    if containsImage && !containsText && !containsFiles {
+    if containsImage {
       return NSImage(systemSymbolName: "photo", accessibilityDescription: nil)
     }
 
@@ -168,7 +168,7 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
   }
 
   func highlight(_ query: String, _ ranges: [Range<String.Index>]) {
-    guard !query.isEmpty, !title.isEmpty else {
+    guard !containsImage, !query.isEmpty, !title.isEmpty else {
       attributedTitle = nil
       return
     }
@@ -212,8 +212,9 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
   private func synchronizeItemPin() {
     _ = withObservationTracking {
       item.pin
-    } onChange: {
-      DispatchQueue.main.async {
+    } onChange: { [weak self] in
+      DispatchQueue.main.async { [weak self] in
+        guard let self, self.item.modelContext != nil else { return }
         if let pin = self.item.pin {
           self.shortcuts = KeyShortcut.create(character: pin)
         }
@@ -225,8 +226,9 @@ class HistoryItemDecorator: Identifiable, Hashable, HasVisibility {
   private func synchronizeItemTitle() {
     _ = withObservationTracking {
       item.title
-    } onChange: {
-      DispatchQueue.main.async {
+    } onChange: { [weak self] in
+      DispatchQueue.main.async { [weak self] in
+        guard let self, self.item.modelContext != nil else { return }
         self.title = self.item.title
         self.synchronizeItemTitle()
       }

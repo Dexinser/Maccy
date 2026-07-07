@@ -131,6 +131,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       Defaults[.migrations]["2024-07-01-version-2"] = true
     }
 
+    if Defaults[.migrations]["2026-07-07-image-storage-types"] != true {
+      let legacyImageTypes: Set<NSPasteboard.PasteboardType> = [.png, .tiff]
+      if !Defaults[.enabledPasteboardTypes].isDisjoint(with: legacyImageTypes) {
+        Defaults[.enabledPasteboardTypes].formUnion(StorageType.images.types)
+      }
+
+      Defaults[.migrations]["2026-07-07-image-storage-types"] = true
+    }
+
     // The following defaults are not used in Maccy 2.x
     // and should be removed in 3.x.
     // - LaunchAtLogin__hasMigrated

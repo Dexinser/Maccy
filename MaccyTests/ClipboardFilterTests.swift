@@ -12,6 +12,8 @@ class ClipboardFilterTests: XCTestCase {
 
   override func setUp() {
     super.setUp()
+    Clipboard.shared.stop()
+    Clipboard.shared.clearHooks()
     history.clearAll()
     Defaults[.size] = 10
     Defaults[.sortBy] = .firstCopiedAt
@@ -23,6 +25,8 @@ class ClipboardFilterTests: XCTestCase {
 
   override func tearDown() {
     super.tearDown()
+    Clipboard.shared.stop()
+    Clipboard.shared.clearHooks()
     history.clearAll()
     Defaults[.size] = savedSize
     Defaults[.sortBy] = savedSortBy
@@ -170,6 +174,18 @@ class ClipboardFilterTests: XCTestCase {
     XCTAssertEqual(history.items, [favorite])
   }
 
+  func testClearingAllClearsSelection() {
+    let selected = history.add(historyItem(text: "selected"))
+    AppState.shared.navigator.selectWithoutScrolling(item: selected)
+    XCTAssertTrue(selected.isSelected)
+
+    history.clearAll()
+
+    XCTAssertFalse(selected.isSelected)
+    XCTAssertTrue(AppState.shared.navigator.selection.isEmpty)
+    XCTAssertNil(AppState.shared.navigator.leadHistoryItem)
+  }
+
   func testMaxSizeIgnoresFavorites() {
     var items: [HistoryItemDecorator] = []
 
@@ -242,6 +258,45 @@ class ClipboardFilterTests: XCTestCase {
     XCTAssertEqual(AppState.shared.navigator.selection.items, [bar])
   }
 
+  func testHoverSelectionByIDClearsStaleMultiSelectionWhenMultiSelectionIsDisabled() {
+    let foo = history.add(historyItem(text: "foo"))
+    let bar = history.add(historyItem(text: "bar"))
+    let favorite = history.add(historyItem(text: "favorite"))
+    history.toggleFavorite(favorite)
+    AppState.shared.navigator.selection = Selection(items: [foo, favorite])
+
+    AppState.shared.navigator.selectWithoutScrolling(id: bar.id)
+
+    XCTAssertFalse(foo.isSelected)
+    XCTAssertTrue(bar.isSelected)
+    XCTAssertFalse(favorite.isSelected)
+    XCTAssertEqual(AppState.shared.navigator.selection.items, [bar])
+    XCTAssertEqual(AppState.shared.navigator.leadHistoryItem, bar)
+  }
+
+  func testStaleMultiSelectionIsNotInProgressWhenMultiSelectionIsDisabled() {
+    let foo = history.add(historyItem(text: "foo"))
+    let favorite = history.add(historyItem(text: "favorite"))
+    history.toggleFavorite(favorite)
+
+    AppState.shared.navigator.selection = Selection(items: [foo, favorite])
+
+    XCTAssertFalse(AppState.shared.multiSelectionEnabled)
+    XCTAssertFalse(AppState.shared.navigator.isMultiSelectInProgress)
+  }
+
+  func testAddingAfterSortPreferenceChangesFallsBackToCurrentSortOrder() {
+    Defaults[.sortBy] = .lastCopiedAt
+    let oldestFirstCopy = history.add(historyItem(text: "oldest", firstCopiedAt: -1_000, lastCopiedAt: -100))
+    let newestFirstCopy = history.add(historyItem(text: "newest", firstCopiedAt: -100, lastCopiedAt: -200))
+    XCTAssertEqual(history.all, [oldestFirstCopy, newestFirstCopy])
+
+    Defaults[.sortBy] = .firstCopiedAt
+    let middleFirstCopy = history.add(historyItem(text: "middle", firstCopiedAt: -150, lastCopiedAt: -300))
+
+    XCTAssertEqual(history.all, [newestFirstCopy, middleFirstCopy, oldestFirstCopy])
+  }
+
   private func historyItem(text: String) -> HistoryItem {
     let item = HistoryItem()
     Storage.shared.context.insert(item)
@@ -252,6 +307,13 @@ class ClipboardFilterTests: XCTestCase {
       )
     ]
     item.title = item.generateTitle()
+    return item
+  }
+
+  private func historyItem(text: String, firstCopiedAt: Int, lastCopiedAt: Int) -> HistoryItem {
+    let item = historyItem(text: text)
+    item.firstCopiedAt = Date(timeIntervalSinceNow: TimeInterval(firstCopiedAt))
+    item.lastCopiedAt = Date(timeIntervalSinceNow: TimeInterval(lastCopiedAt))
     return item
   }
 

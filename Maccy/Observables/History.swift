@@ -71,6 +71,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
   @ObservationIgnored
   private var duplicateIndex = HistoryDuplicateIndex()
 
+  @ObservationIgnored
+  private var allSortingPreferences = HistorySortingPreferences.current
+
   init() {
     Task {
       for await _ in Defaults.updates(.pasteByDefault, initial: false) {
@@ -112,6 +115,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     let descriptor = FetchDescriptor<HistoryItem>()
     let results = try Storage.shared.context.fetch(descriptor)
     all = sorter.sort(results).map { HistoryItemDecorator($0) }
+    allSortingPreferences = .current
     rebuildDuplicateIndex()
     recomputeVisibleItems(updateSelection: false, needsResize: false)
 
@@ -194,11 +198,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     } else {
       itemDecorator = HistoryItemDecorator(item)
 
-      let sortedItems = sorter.sort(all.map(\.item) + [item])
-      if let index = sortedItems.firstIndex(of: item) {
-        all.insert(itemDecorator, at: index)
-        duplicateIndex.insert(itemDecorator, at: index)
-      }
+      insertSorted(itemDecorator)
     }
 
     recomputeVisibleItems(updateSelection: false)
@@ -221,6 +221,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
 
   @MainActor
   func clear() {
+    throttler.cancel()
     withLogging("Clearing history") {
       all.forEach { item in
         if item.isDisposable {
@@ -230,7 +231,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       all.removeAll(where: \.isDisposable)
       rebuildDuplicateIndex()
       sessionLog.removeValues { $0.pin == nil && !$0.isFavorite }
-      recomputeVisibleItems(updateSelection: false, needsResize: false)
+      recomputeVisibleItems(updateSelection: true, needsResize: false)
 
       try? Storage.shared.context.transaction {
         try? Storage.shared.context.delete(
@@ -255,6 +256,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
 
   @MainActor
   func clearAll() {
+    throttler.cancel()
     withLogging("Clearing all history") {
       all.forEach { item in
         cleanup(item)
@@ -262,7 +264,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       all.removeAll()
       rebuildDuplicateIndex()
       sessionLog.removeAll()
-      recomputeVisibleItems(updateSelection: false, needsResize: false)
+      recomputeVisibleItems(updateSelection: true, needsResize: false)
 
       try? Storage.shared.context.delete(model: HistoryItem.self)
       Storage.shared.context.processPendingChanges()
@@ -447,6 +449,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       all.remove(at: currentIndex)
       all.insert(item, at: newIndex)
       duplicateIndex.reorder(with: all)
+      allSortingPreferences = .current
     }
 
     searchQuery = ""
@@ -488,6 +491,21 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
 
   private func rebuildDuplicateIndex() {
     duplicateIndex.rebuild(with: all)
+  }
+
+  private func insertSorted(_ item: HistoryItemDecorator) {
+    let currentSortingPreferences = HistorySortingPreferences.current
+    guard allSortingPreferences == currentSortingPreferences else {
+      all.append(item)
+      all = sorter.sort(all, by: currentSortingPreferences.sortBy)
+      allSortingPreferences = currentSortingPreferences
+      rebuildDuplicateIndex()
+      return
+    }
+
+    let index = sorter.insertionIndex(for: item.item, in: all, by: currentSortingPreferences.sortBy)
+    all.insert(item, at: index)
+    duplicateIndex.insert(item, at: index)
   }
 
   private func isModified(_ item: HistoryItem) -> HistoryItem? {
@@ -568,5 +586,14 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       item.shortcuts = KeyShortcut.create(character: String(index))
       index += 1
     }
+  }
+}
+
+private struct HistorySortingPreferences: Equatable {
+  let sortBy: Sorter.By
+  let pinTo: PinsPosition
+
+  static var current: Self {
+    Self(sortBy: Defaults[.sortBy], pinTo: Defaults[.pinTo])
   }
 }

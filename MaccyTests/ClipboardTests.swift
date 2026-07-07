@@ -3,6 +3,7 @@ import Defaults
 @testable import Maccy
 
 // swiftlint:disable type_body_length
+@MainActor
 class ClipboardTests: XCTestCase {
   let clipboard = Clipboard.shared
   let pasteboard = NSPasteboard.general
@@ -14,11 +15,13 @@ class ClipboardTests: XCTestCase {
   let customType = NSPasteboard.PasteboardType(rawValue: "org.maccy.ConfidentialType")
   let fileURLType = NSPasteboard.PasteboardType.fileURL
   let htmlType = NSPasteboard.PasteboardType.html
+  let jpegType = NSPasteboard.PasteboardType.jpeg
   let rtfType = NSPasteboard.PasteboardType.rtf
   let stringType = NSPasteboard.PasteboardType.string
   let tiffType = NSPasteboard.PasteboardType.tiff
   let transientType = NSPasteboard.PasteboardType.transient
   let unknownType = NSPasteboard.PasteboardType(rawValue: "com.apple.AnnotationKit.AnnotationItem")
+  let webArchiveType = NSPasteboard.PasteboardType(rawValue: "com.apple.webarchive")
 
   let savedEnabledTypes = Defaults[.enabledPasteboardTypes]
   let savedIgnoreEvents = Defaults[.ignoreEvents]
@@ -32,12 +35,15 @@ class ClipboardTests: XCTestCase {
 
   override func setUp() {
     super.setUp()
+    clipboard.stop()
+    clipboard.clearHooks()
     Defaults[.ignoreAllAppsExceptListed] = false
     Defaults[.ignoreEvents] = false
   }
 
   override func tearDown() {
     super.tearDown()
+    clipboard.stop()
     Defaults[.enabledPasteboardTypes] = savedEnabledTypes
     Defaults[.ignoreEvents] = savedIgnoreEvents
     Defaults[.ignoreOnlyNextEvent] = false
@@ -55,6 +61,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString("bar", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -67,6 +74,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString(" ", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -79,6 +87,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString("\n", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -94,6 +103,7 @@ class ClipboardTests: XCTestCase {
     )
     pasteboard.declareTypes([.rtf], owner: nil)
     pasteboard.setData(rtf, forType: .rtf)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -105,6 +115,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.html], owner: nil)
     pasteboard.setString("foo", forType: .html)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -119,6 +130,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString("foo", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -134,6 +146,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString("foo", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
 
     XCTAssertFalse(Defaults[.ignoreEvents])
@@ -151,6 +164,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString("bar", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -165,6 +179,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString("bar", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -177,6 +192,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string, transientType], owner: nil)
     pasteboard.setString("bar", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -191,6 +207,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([.string, customType], owner: nil)
     pasteboard.setString("bar", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -203,10 +220,10 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.declareTypes([unknownType], owner: nil)
     pasteboard.setString(" ", forType: unknownType)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
-  @MainActor
   func testCopy() {
     let imageData = image.tiffRepresentation!
     let contents = [
@@ -226,7 +243,6 @@ class ClipboardTests: XCTestCase {
     XCTAssertEqual(pasteboard.string(forType: .source), "com.foo.bar")
   }
 
-  @MainActor
   func testCopyWithoutFormatting() {
     let contents = [
       HistoryItemContent(type: stringType.rawValue, value: "foo".data(using: .utf8)!),
@@ -257,6 +273,7 @@ class ClipboardTests: XCTestCase {
     pasteboard.declareTypes([.fileURL, .string], owner: nil)
     // fileURL is left without data
     pasteboard.setString("bar", forType: .string)
+    triggerClipboardCheck()
     waitForExpectations(timeout: 2)
   }
 
@@ -278,6 +295,7 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.clearContents()
     pasteboard.writeObjects([item1, item2])
+    triggerClipboardCheck()
 
     waitForExpectations(timeout: 2)
   }
@@ -299,6 +317,46 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.clearContents()
     pasteboard.writeObjects([item])
+    triggerClipboardCheck()
+
+    waitForExpectations(timeout: 2)
+  }
+
+  func testRemovesUnsupportedTypesWhenSupportedTypesArePresent() {
+    let hookExpectation = expectation(description: "Hook is called")
+    clipboard.onNewCopy({ (item: HistoryItem) in
+      XCTAssertEqual(item.contents.map({ $0.type }), [self.stringType.rawValue])
+      hookExpectation.fulfill()
+    })
+
+    let item = NSPasteboardItem()
+    item.setString("foo", forType: .string)
+    item.setData(Data(repeating: 1, count: 1024), forType: webArchiveType)
+
+    clipboard.start()
+    pasteboard.clearContents()
+    pasteboard.writeObjects([item])
+    triggerClipboardCheck()
+
+    waitForExpectations(timeout: 2)
+  }
+
+  func testKeepsJPEGImageTypes() {
+    Defaults[.enabledPasteboardTypes].insert(jpegType)
+
+    let hookExpectation = expectation(description: "Hook is called")
+    clipboard.onNewCopy({ (item: HistoryItem) in
+      XCTAssertEqual(item.contents.map({ $0.type }), [self.jpegType.rawValue])
+      hookExpectation.fulfill()
+    })
+
+    let item = NSPasteboardItem()
+    item.setData(Data(repeating: 2, count: 1024), forType: jpegType)
+
+    clipboard.start()
+    pasteboard.clearContents()
+    pasteboard.writeObjects([item])
+    triggerClipboardCheck()
 
     waitForExpectations(timeout: 2)
   }
@@ -317,8 +375,13 @@ class ClipboardTests: XCTestCase {
     clipboard.start()
     pasteboard.clearContents()
     pasteboard.writeObjects([item])
+    triggerClipboardCheck()
 
     waitForExpectations(timeout: 2)
+  }
+
+  private func triggerClipboardCheck() {
+    clipboard.checkForChangesInPasteboard()
   }
 }
 // swiftlint:enable type_body_length

@@ -24,9 +24,35 @@ class Sorter {
   }
 
   func sort(_ items: [HistoryItem], by: By = Defaults[.sortBy]) -> [HistoryItem] {
-    return items
-      .sorted(by: { return bySortingAlgorithm($0, $1, by) })
-      .sorted(by: byPinned)
+    return items.sorted { shouldSort($0, before: $1, by: by) }
+  }
+
+  func sort(_ items: [HistoryItemDecorator], by: By = Defaults[.sortBy]) -> [HistoryItemDecorator] {
+    return items.sorted { shouldSort($0.item, before: $1.item, by: by) }
+  }
+
+  func insertionIndex(
+    for item: HistoryItem,
+    in sortedItems: [HistoryItem],
+    by: By = Defaults[.sortBy]
+  ) -> Int {
+    sortedItems.firstIndex { shouldSort(item, before: $0, by: by) } ?? sortedItems.endIndex
+  }
+
+  func insertionIndex(
+    for item: HistoryItem,
+    in sortedItems: [HistoryItemDecorator],
+    by: By = Defaults[.sortBy]
+  ) -> Int {
+    sortedItems.firstIndex { shouldSort(item, before: $0.item, by: by) } ?? sortedItems.endIndex
+  }
+
+  private func shouldSort(_ lhs: HistoryItem, before rhs: HistoryItem, by: By) -> Bool {
+    if (lhs.pin == nil) != (rhs.pin == nil) {
+      return byPinned(lhs, rhs)
+    }
+
+    return bySortingAlgorithm(lhs, rhs, by)
   }
 
   private func bySortingAlgorithm(_ lhs: HistoryItem, _ rhs: HistoryItem, _ by: By) -> Bool {

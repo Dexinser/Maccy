@@ -89,6 +89,34 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertNotNil(itemDecorator.listAccessoryImage)
   }
 
+  func testMixedImageListTitleDoesNotExposeClipboardText() {
+    let itemDecorator = historyItemDecorator(
+      text: "Maccy Q W screenshot text",
+      image: NSImage(named: "StatusBarMenuImage")!
+    )
+    itemDecorator.title = "Maccy Q W screenshot text"
+    itemDecorator.item.title = itemDecorator.title
+
+    XCTAssertTrue(itemDecorator.containsImage)
+    XCTAssertTrue(itemDecorator.containsText)
+    XCTAssertEqual(itemDecorator.listTitle, "")
+    XCTAssertNotNil(itemDecorator.listAccessoryImage)
+  }
+
+  func testMixedImageSearchHighlightDoesNotExposeClipboardText() {
+    let itemDecorator = historyItemDecorator(
+      text: "Maccy Q W screenshot text",
+      image: NSImage(named: "StatusBarMenuImage")!
+    )
+    itemDecorator.title = "Maccy Q W screenshot text"
+    itemDecorator.item.title = itemDecorator.title
+
+    itemDecorator.highlight("screenshot", [itemDecorator.title.range(of: "screenshot")!])
+
+    XCTAssertTrue(itemDecorator.containsImage)
+    XCTAssertNil(itemDecorator.attributedTitle)
+  }
+
   // We also need to add test for image with width bigger than max width.
   func testImageWithHeightBiggerThanMaxHeight() {
     let image = NSImage(named: "NSApplicationIcon")!
@@ -247,6 +275,29 @@ class HistoryItemDecoratorTests: XCTestCase {
       HistoryItemContent(
         type: NSPasteboard.PasteboardType.tiff.rawValue,
         value: value.tiffRepresentation!
+      )
+    ]
+    let item = HistoryItem()
+    Storage.shared.context.insert(item)
+    item.contents = contents
+    item.title = item.generateTitle()
+    item.application = "com.apple.finder"
+    item.firstCopiedAt = firstCopiedAt
+    item.lastCopiedAt = lastCopiedAt
+    item.numberOfCopies = 2
+
+    return HistoryItemDecorator(item)
+  }
+
+  private func historyItemDecorator(text: String, image: NSImage) -> HistoryItemDecorator {
+    let contents = [
+      HistoryItemContent(
+        type: NSPasteboard.PasteboardType.string.rawValue,
+        value: text.data(using: .utf8)
+      ),
+      HistoryItemContent(
+        type: NSPasteboard.PasteboardType.tiff.rawValue,
+        value: image.tiffRepresentation!
       )
     ]
     let item = HistoryItem()

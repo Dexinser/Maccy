@@ -52,6 +52,45 @@ class SorterTests: XCTestCase {
   }
 
   @MainActor
+  func testInsertionIndexMatchesSortedOrder() {
+    Defaults[.pinTo] = .top
+    let sortedItems = sorter.sort([item1, item2, item3], by: .lastCopiedAt)
+    let item4 = historyItem(value: "baz", firstCopiedAt: -500, lastCopiedAt: -250, numberOfCopies: 4)
+
+    let index = sorter.insertionIndex(for: item4, in: sortedItems, by: .lastCopiedAt)
+
+    XCTAssertEqual(sortedItems.inserting(item4, at: index), sorter.sort(sortedItems + [item4], by: .lastCopiedAt))
+  }
+
+  @MainActor
+  func testInsertionIndexRespectsPinnedItemsAtTop() {
+    Defaults[.pinTo] = .top
+    item1.pin = "a"
+    item3.pin = "b"
+    let sortedItems = sorter.sort([item1, item2, item3], by: .lastCopiedAt)
+    let item4 = historyItem(value: "baz", firstCopiedAt: -500, lastCopiedAt: -50, numberOfCopies: 4)
+
+    let index = sorter.insertionIndex(for: item4, in: sortedItems, by: .lastCopiedAt)
+
+    XCTAssertEqual(index, 2)
+    XCTAssertEqual(sortedItems.inserting(item4, at: index), sorter.sort(sortedItems + [item4], by: .lastCopiedAt))
+  }
+
+  @MainActor
+  func testInsertionIndexRespectsPinnedItemsAtBottom() {
+    Defaults[.pinTo] = .bottom
+    item1.pin = "a"
+    item3.pin = "b"
+    let sortedItems = sorter.sort([item1, item2, item3], by: .lastCopiedAt)
+    let item4 = historyItem(value: "baz", firstCopiedAt: -500, lastCopiedAt: -50, numberOfCopies: 4)
+
+    let index = sorter.insertionIndex(for: item4, in: sortedItems, by: .lastCopiedAt)
+
+    XCTAssertEqual(index, 0)
+    XCTAssertEqual(sortedItems.inserting(item4, at: index), sorter.sort(sortedItems + [item4], by: .lastCopiedAt))
+  }
+
+  @MainActor
   private func historyItem(
     value: String,
     firstCopiedAt: Int,
@@ -66,5 +105,13 @@ class SorterTests: XCTestCase {
     item.lastCopiedAt = Date(timeIntervalSinceNow: TimeInterval(lastCopiedAt))
     item.numberOfCopies = numberOfCopies
     return item
+  }
+}
+
+private extension Array {
+  func inserting(_ element: Element, at index: Int) -> [Element] {
+    var copy = self
+    copy.insert(element, at: index)
+    return copy
   }
 }

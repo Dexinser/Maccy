@@ -48,7 +48,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
 
   var isManualMultiSelect: Bool = false
   var isMultiSelectInProgress: Bool {
-    return isManualMultiSelect || selection.count > 1
+    return AppState.shared.multiSelectionEnabled && (isManualMultiSelect || selection.count > 1)
   }
 
   var hoverSelectionWhileKeyboardNavigating: UUID?
@@ -165,6 +165,7 @@ class NavigationManager { // swiftlint:disable:this type_body_length
 
   private func selectInHistory(_ item: HistoryItemDecorator) {
     leadHistoryItem = item
+    isManualMultiSelect = false
     history.all.forEach { $0.selectionIndex = -1 }
     selection = .init(items: [item])
     footer.selectedItem = nil
