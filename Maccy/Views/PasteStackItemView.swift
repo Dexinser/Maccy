@@ -15,6 +15,20 @@ private struct PasteStackId: Hashable {
   }
 }
 
+struct PasteStackItemPresentation {
+  let title: String
+  let thumbnailImage: NSImage?
+  let accessoryImage: NSImage?
+  let attributedTitle: AttributedString?
+
+  init(item: HistoryItemDecorator, index: Int?) {
+    title = item.listTitle
+    thumbnailImage = index != nil ? item.thumbnailImage : nil
+    accessoryImage = thumbnailImage == nil ? item.listAccessoryImage : nil
+    attributedTitle = item.attributedTitle
+  }
+}
+
 struct PasteStackItemView: View {
   var stack: PasteStack
   var item: HistoryItemDecorator
@@ -22,19 +36,21 @@ struct PasteStackItemView: View {
   var isSelected: Bool
 
   var body: some View {
+    let presentation = PasteStackItemPresentation(item: item, index: index)
+
     ListItemView(
       id: PasteStackId(pasteStackId: stack.id, itemId: item.id),
       selectionId: stack.id,
       appIcon: item.applicationImage,
-      image: index != nil ? item.thumbnailImage : nil,
-      accessoryImage: item.thumbnailImage != nil ? nil : ColorImage.from(item.title),
-      attributedTitle: item.attributedTitle,
+      image: presentation.thumbnailImage,
+      accessoryImage: presentation.accessoryImage,
+      attributedTitle: presentation.attributedTitle,
       shortcuts: [],
       isSelected: isSelected,
       selectionIndex: index,
       selectionAppearance: .none
     ) {
-      Text(verbatim: item.title)
+      Text(verbatim: presentation.title)
     }
   }
 }

@@ -117,6 +117,20 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertNil(itemDecorator.attributedTitle)
   }
 
+  func testPasteStackImagePresentationDoesNotExposeRecognizedImageText() {
+    let itemDecorator = historyItemDecorator(
+      text: "Maccy Q W screenshot text",
+      image: NSImage(named: "StatusBarMenuImage")!
+    )
+    itemDecorator.title = "Maccy Q W screenshot text"
+    itemDecorator.item.title = itemDecorator.title
+
+    let presentation = PasteStackItemPresentation(item: itemDecorator, index: 0)
+
+    XCTAssertEqual(presentation.title, "")
+    XCTAssertNotNil(presentation.accessoryImage)
+  }
+
   // We also need to add test for image with width bigger than max width.
   func testImageWithHeightBiggerThanMaxHeight() {
     let image = NSImage(named: "NSApplicationIcon")!
