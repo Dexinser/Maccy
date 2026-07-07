@@ -163,8 +163,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
         all.remove(at: removedItemIndex)
       }
     } else {
+      let notificationTitle = item.title
       Task {
-        Notifier.notify(body: item.title, sound: .write)
+        Notifier.notify(body: notificationTitle, sound: .write)
       }
     }
 
@@ -448,12 +449,13 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     if !isNowFavorite {
       limitHistorySize(to: Defaults[.size])
     }
+    let wasRemoved = !all.contains(item)
 
     Storage.shared.context.processPendingChanges()
     try? Storage.shared.context.save()
 
     searchQuery = ""
-    recomputeVisibleItems(updateSelection: activeFilter == .favorites, needsResize: false)
+    recomputeVisibleItems(updateSelection: activeFilter == .favorites || wasRemoved, needsResize: false)
     if isNowFavorite {
       AppState.shared.navigator.scrollTarget = item.id
     }

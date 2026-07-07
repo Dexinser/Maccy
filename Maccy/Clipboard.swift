@@ -102,8 +102,9 @@ class Clipboard {
     pasteboard.setString(item.application ?? "", forType: .source)
     sync()
 
+    let notificationTitle = item.title
     Task {
-      Notifier.notify(body: item.title, sound: .knock)
+      Notifier.notify(body: notificationTitle, sound: .knock)
       checkForChangesInPasteboard()
     }
   }

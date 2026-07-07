@@ -159,6 +159,15 @@ class HistoryItemDecoratorTests: XCTestCase {
     XCTAssertFalse(itemDecorator.isFavorite)
   }
 
+  func testHashDoesNotChangeWhenFavoriteChanges() {
+    let itemDecorator = historyItemDecorator("foo")
+    let initialHash = hash(itemDecorator)
+
+    itemDecorator.toggleFavorite()
+
+    XCTAssertEqual(hash(itemDecorator), initialHash)
+  }
+
   func testHighlight() {
     let itemDecorator = historyItemDecorator("foo bar baz")
     itemDecorator.highlight("random", [
@@ -192,6 +201,12 @@ class HistoryItemDecoratorTests: XCTestCase {
     item.lastCopiedAt = lastCopiedAt
 
     return HistoryItemDecorator(item)
+  }
+
+  private func hash(_ item: HistoryItemDecorator) -> Int {
+    var hasher = Hasher()
+    item.hash(into: &hasher)
+    return hasher.finalize()
   }
 
   private func historyItemDecorator(

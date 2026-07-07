@@ -189,6 +189,20 @@ class ClipboardFilterTests: XCTestCase {
     XCTAssertFalse(history.all.contains(favorite))
   }
 
+  func testUnfavoritingSelectedItemReselectsWhenTrimmedFromHistory() {
+    Defaults[.size] = 1
+    let favorite = history.add(historyItem(text: "favorite"))
+    history.toggleFavorite(favorite)
+    let regular = history.add(historyItem(text: "regular"))
+    AppState.shared.navigator.select(item: favorite)
+
+    history.toggleFavorite(favorite)
+
+    XCTAssertFalse(history.all.contains(favorite))
+    XCTAssertEqual(history.items, [regular])
+    XCTAssertEqual(AppState.shared.navigator.selection.first, regular)
+  }
+
   func testRecomputeSelectsPinnedItemWhenOnlyPinnedItemsAreVisible() {
     let pinned = history.add(historyItem(text: "pinned"))
     pinned.togglePin()
