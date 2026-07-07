@@ -59,6 +59,10 @@ class HistoryItem {
     NSPasteboard.PasteboardType.notesRichText.rawValue
   ]
 
+  static func isTransientContentType(_ type: String) -> Bool {
+    transientTypes.contains(type)
+  }
+
   private static let imageTypes: Set<NSPasteboard.PasteboardType> = [
     .tiff,
     .png,
@@ -234,6 +238,10 @@ class HistoryItem {
     }
 
     return .mixed
+  }
+
+  var comparableContentSignatures: [HistoryItemContentSignature] {
+    contents.compactMap(HistoryItemContentSignature.init)
   }
 
   private var universalClipboardImage: Bool { universalClipboard && fileURLs.first?.pathExtension == "jpeg" }

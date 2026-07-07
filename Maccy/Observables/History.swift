@@ -68,6 +68,9 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
   @ObservationIgnored
   private var visibleItemsByID: [UUID: HistoryItemDecorator] = [:]
 
+  @ObservationIgnored
+  private var duplicateIndex = HistoryDuplicateIndex()
+
   init() {
     Task {
       for await _ in Defaults.updates(.pasteByDefault, initial: false) {
@@ -109,6 +112,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
     let descriptor = FetchDescriptor<HistoryItem>()
     let results = try Storage.shared.context.fetch(descriptor)
     all = sorter.sort(results).map { HistoryItemDecorator($0) }
+    rebuildDuplicateIndex()
     recomputeVisibleItems(updateSelection: false, needsResize: false)
 
     limitHistorySize(to: Defaults[.size])
@@ -163,7 +167,8 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       Storage.shared.context.delete(existingHistoryItem)
       removedItemIndex = all.firstIndex(where: { $0.item == existingHistoryItem })
       if let removedItemIndex {
-        all.remove(at: removedItemIndex)
+        let removedItem = all.remove(at: removedItemIndex)
+        duplicateIndex.remove(removedItem)
       }
     } else {
       let notificationTitle = item.title
@@ -184,6 +189,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       // Keep pins in the same place.
       if let removedItemIndex {
         all.insert(itemDecorator, at: removedItemIndex)
+        duplicateIndex.insert(itemDecorator, at: removedItemIndex)
       }
     } else {
       itemDecorator = HistoryItemDecorator(item)
@@ -191,6 +197,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       let sortedItems = sorter.sort(all.map(\.item) + [item])
       if let index = sortedItems.firstIndex(of: item) {
         all.insert(itemDecorator, at: index)
+        duplicateIndex.insert(itemDecorator, at: index)
       }
     }
 
@@ -221,6 +228,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
         }
       }
       all.removeAll(where: \.isDisposable)
+      rebuildDuplicateIndex()
       sessionLog.removeValues { $0.pin == nil && !$0.isFavorite }
       recomputeVisibleItems(updateSelection: false, needsResize: false)
 
@@ -252,6 +260,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
         cleanup(item)
       }
       all.removeAll()
+      rebuildDuplicateIndex()
       sessionLog.removeAll()
       recomputeVisibleItems(updateSelection: false, needsResize: false)
 
@@ -278,7 +287,10 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
       try? Storage.shared.context.save()
     }
 
-    all.removeAll { $0 == item }
+    if let index = all.firstIndex(of: item) {
+      let removedItem = all.remove(at: index)
+      duplicateIndex.remove(removedItem)
+    }
     sessionLog.removeValues { $0 == item.item }
 
     recomputeVisibleItems(updateSelection: false)
@@ -434,6 +446,7 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
        let newIndex = sortedItems.firstIndex(of: item.item) {
       all.remove(at: currentIndex)
       all.insert(item, at: newIndex)
+      duplicateIndex.reorder(with: all)
     }
 
     searchQuery = ""
@@ -466,17 +479,15 @@ class History: ItemsContainer { // swiftlint:disable:this type_body_length
 
   @MainActor
   private func findSimilarItem(_ item: HistoryItem) -> HistoryItem? {
-    let descriptor = FetchDescriptor<HistoryItem>()
-    if let all = try? Storage.shared.context.fetch(descriptor) {
-      let duplicates = all.filter({ $0 == item || $0.supersedes(item) })
-      if duplicates.count > 1 {
-        return duplicates.first(where: { $0 != item })
-      } else {
-        return isModified(item)
-      }
+    if let duplicate = duplicateIndex.candidates(for: item).first(where: { $0 == item || $0.supersedes(item) }) {
+      return duplicate
     }
 
-    return item
+    return isModified(item)
+  }
+
+  private func rebuildDuplicateIndex() {
+    duplicateIndex.rebuild(with: all)
   }
 
   private func isModified(_ item: HistoryItem) -> HistoryItem? {
